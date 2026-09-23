@@ -4,12 +4,11 @@ startButton.addEventListener("click", startLesson);
 
 
 // ======================================================
-// LESSON 1 - BOOKING A TOUR TO DA NANG
+// LESSON DATA
 // ======================================================
 
 const questions = [
 
-  // QUESTION 1
   {
     number: 1,
 
@@ -20,6 +19,13 @@ const questions = [
       "I'd like to go to Da Nang.",
       "I like chicken.",
       "I am sixteen years old."
+    ],
+
+    acceptedAnswers: [
+      "i'd like to go to da nang",
+      "i would like to go to da nang",
+      "i want to go to da nang",
+      "da nang"
     ],
 
     correct: 0,
@@ -35,7 +41,6 @@ const questions = [
   },
 
 
-  // QUESTION 2
   {
     number: 2,
 
@@ -46,6 +51,14 @@ const questions = [
       "I'd like to visit Ba Na Hills.",
       "I'd like a double room.",
       "Three days."
+    ],
+
+    acceptedAnswers: [
+      "i'd like to visit ba na hills",
+      "i would like to visit ba na hills",
+      "i want to visit ba na hills",
+      "visit ba na hills",
+      "ba na hills"
     ],
 
     correct: 0,
@@ -61,7 +74,6 @@ const questions = [
   },
 
 
-  // QUESTION 3
   {
     number: 3,
 
@@ -72,6 +84,14 @@ const questions = [
       "I'd like a double room.",
       "I'd like to visit Ba Na Hills.",
       "I go to school every day."
+    ],
+
+    acceptedAnswers: [
+      "i'd like a double room",
+      "i would like a double room",
+      "i want a double room",
+      "a double room",
+      "double room"
     ],
 
     correct: 0,
@@ -87,7 +107,6 @@ const questions = [
   },
 
 
-  // QUESTION 4
   {
     number: 4,
 
@@ -98,6 +117,13 @@ const questions = [
       "How much is it?",
       "Where is my school?",
       "I like swimming."
+    ],
+
+    acceptedAnswers: [
+      "how much is it",
+      "how much",
+      "what is the price",
+      "what's the price"
     ],
 
     correct: 0,
@@ -113,7 +139,6 @@ const questions = [
   },
 
 
-  // QUESTION 5
   {
     number: 5,
 
@@ -124,6 +149,14 @@ const questions = [
       "I'd like to stay for three days.",
       "I'd like a double room.",
       "My name is Nam."
+    ],
+
+    acceptedAnswers: [
+      "i'd like to stay for three days",
+      "i would like to stay for three days",
+      "i want to stay for three days",
+      "three days",
+      "3 days"
     ],
 
     correct: 0,
@@ -139,7 +172,6 @@ const questions = [
   },
 
 
-  // QUESTION 6
   {
     number: 6,
 
@@ -150,6 +182,15 @@ const questions = [
       "Yes, that's correct. Thank you.",
       "I am a student.",
       "I don't have a bicycle."
+    ],
+
+    acceptedAnswers: [
+      "yes that's correct thank you",
+      "yes that is correct thank you",
+      "yes that's correct",
+      "yes that is correct",
+      "yes correct",
+      "yes"
     ],
 
     correct: 0,
@@ -177,10 +218,6 @@ let score = 0;
 
 let hintLevel = 0;
 
-
-// Lưu những câu đã được tính điểm.
-// Mỗi câu chỉ được cộng điểm 1 lần.
-
 let answeredQuestions = new Set();
 
 
@@ -205,28 +242,22 @@ function startLesson() {
 
       <div class="mission">
 
-        <h3>
-          🎭 Role Play
-        </h3>
+        <h3>🎭 Role Play</h3>
 
         <p>
-          👩‍💼
-          <strong>AI:</strong>
+          👩‍💼 <strong>AI:</strong>
           Travel Agent
         </p>
 
         <p>
-          🧳
-          <strong>You:</strong>
+          🧳 <strong>You:</strong>
           Tourist
         </p>
 
       </div>
 
 
-      <h3>
-        🎯 Your Mission
-      </h3>
+      <h3>🎯 Your Mission</h3>
 
       <p>
         Book a trip to Da Nang by talking
@@ -234,12 +265,15 @@ function startLesson() {
       </p>
 
       <p>
-        Complete all 6 conversation tasks.
+        You can choose an answer
+        or type your own answer.
       </p>
 
 
       <button id="beginConversation">
-        🎤 Begin Conversation
+
+        ▶ Start Conversation
+
       </button>
 
     </section>
@@ -258,7 +292,7 @@ function startLesson() {
 
 
 // ======================================================
-// BEGIN CONVERSATION
+// BEGIN
 // ======================================================
 
 function beginConversation() {
@@ -289,6 +323,11 @@ function showQuestion() {
     questions[currentQuestion];
 
 
+  const progress =
+    ((currentQuestion + 1) /
+      questions.length) * 100;
+
+
   document.querySelector("main").innerHTML = `
 
     <section class="lesson-card">
@@ -303,6 +342,17 @@ function showQuestion() {
       </div>
 
 
+      <div class="progress-track">
+
+        <div
+          class="progress-bar"
+          style="width:${progress}%">
+
+        </div>
+
+      </div>
+
+
       <h2>
         👩‍💼 Travel Agent
       </h2>
@@ -310,7 +360,7 @@ function showQuestion() {
 
       <div class="mission">
 
-        <p style="font-size:22px;">
+        <p class="ai-question">
 
           <strong>
             ${item.question}
@@ -322,6 +372,7 @@ function showQuestion() {
 
 
       <button
+        class="listen-button"
         onclick="listenQuestion()">
 
         🔊 Listen
@@ -330,7 +381,7 @@ function showQuestion() {
 
 
       <h3>
-        Choose your answer:
+        👆 Choose an answer
       </h3>
 
 
@@ -338,10 +389,41 @@ function showQuestion() {
       </div>
 
 
-      <br>
+      <div class="or-divider">
+
+        <span>OR</span>
+
+      </div>
+
+
+      <div class="type-area">
+
+        <h3>
+          ⌨️ Type your answer
+        </h3>
+
+
+        <input
+          id="studentAnswer"
+          type="text"
+          autocomplete="off"
+          placeholder="Type your English answer here..."
+        >
+
+
+        <button
+          class="check-button"
+          onclick="checkTypedAnswer()">
+
+          ✓ Check My Answer
+
+        </button>
+
+      </div>
 
 
       <button
+        class="hint-button"
         onclick="showHint()">
 
         💡 Hint
@@ -351,7 +433,7 @@ function showQuestion() {
 
       <div
         id="feedback"
-        style="margin-top:20px;">
+        class="feedback-area">
 
       </div>
 
@@ -360,8 +442,6 @@ function showQuestion() {
 
   `;
 
-
-  // CREATE ANSWER BUTTONS
 
   const answerArea =
     document.getElementById(
@@ -382,34 +462,14 @@ function showQuestion() {
         answer;
 
 
-      button.style.display =
-        "block";
-
-
-      button.style.width =
-        "100%";
-
-
-      button.style.margin =
-        "10px 0";
-
-
-      button.style.padding =
-        "14px";
-
-
-      button.style.fontSize =
-        "17px";
-
-
-      button.style.cursor =
-        "pointer";
+      button.className =
+        "answer-button";
 
 
       button.onclick =
         function () {
 
-          checkAnswer(index);
+          checkChoiceAnswer(index);
 
         };
 
@@ -422,7 +482,25 @@ function showQuestion() {
   );
 
 
-  // AI READS QUESTION
+  const input =
+    document.getElementById(
+      "studentAnswer"
+    );
+
+
+  input.addEventListener(
+    "keydown",
+    function (event) {
+
+      if (event.key === "Enter") {
+
+        checkTypedAnswer();
+
+      }
+
+    }
+  );
+
 
   speakText(
     item.question
@@ -432,7 +510,7 @@ function showQuestion() {
 
 
 // ======================================================
-// LISTEN BUTTON
+// LISTEN
 // ======================================================
 
 function listenQuestion() {
@@ -449,10 +527,10 @@ function listenQuestion() {
 
 
 // ======================================================
-// CHECK ANSWER
+// CHOICE ANSWER
 // ======================================================
 
-function checkAnswer(
+function checkChoiceAnswer(
   selectedIndex
 ) {
 
@@ -460,31 +538,41 @@ function checkAnswer(
     questions[currentQuestion];
 
 
-  // CORRECT ANSWER
-
   if (
     selectedIndex ===
     item.correct
   ) {
 
+    correctAnswer();
 
-    // Only give 1 point
-    // for each question.
+  }
 
-    if (
-      !answeredQuestions.has(
-        currentQuestion
-      )
-    ) {
+  else {
 
-      score++;
+    wrongAnswer();
 
-      answeredQuestions.add(
-        currentQuestion
-      );
+  }
 
-    }
+}
 
+
+// ======================================================
+// TYPED ANSWER
+// ======================================================
+
+function checkTypedAnswer() {
+
+  const input =
+    document.getElementById(
+      "studentAnswer"
+    );
+
+
+  const studentText =
+    input.value.trim();
+
+
+  if (!studentText) {
 
     document
       .getElementById(
@@ -495,82 +583,279 @@ function checkAnswer(
         <div class="mission">
 
           <h3>
-            ✅ Excellent!
+            ✍️ Type your answer first
           </h3>
 
-
           <p>
-            <strong>
-              ${item.answers[item.correct]}
-            </strong>
+            Write an English answer
+            in the box above.
           </p>
-
-
-          <p>
-            👩‍💼
-            ${item.response}
-          </p>
-
-
-          <button
-            onclick="nextQuestion()">
-
-            ${
-              currentQuestion <
-              questions.length - 1
-
-              ? "Continue ➜"
-
-              : "See My Result 🎉"
-            }
-
-          </button>
 
         </div>
 
       `;
 
+    input.focus();
 
-    speakText(
-      item.response
+    return;
+
+  }
+
+
+  const item =
+    questions[currentQuestion];
+
+
+  const normalizedStudent =
+    normalizeText(
+      studentText
+    );
+
+
+  const isAccepted =
+    item.acceptedAnswers.some(
+      answer =>
+        normalizeText(answer) ===
+        normalizedStudent
+    );
+
+
+  if (isAccepted) {
+
+    correctAnswer(
+      studentText
+    );
+
+  }
+
+  else {
+
+    typedAnswerNeedsHelp(
+      studentText
+    );
+
+  }
+
+}
+
+
+// ======================================================
+// NORMALIZE TEXT
+// ======================================================
+
+function normalizeText(text) {
+
+  return text
+    .toLowerCase()
+    .replace(/[.,!?]/g, "")
+    .replace(/[’‘]/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+
+}
+
+
+// ======================================================
+// CORRECT ANSWER
+// ======================================================
+
+function correctAnswer(
+  studentText = null
+) {
+
+  const item =
+    questions[currentQuestion];
+
+
+  if (
+    !answeredQuestions.has(
+      currentQuestion
+    )
+  ) {
+
+    score++;
+
+    answeredQuestions.add(
+      currentQuestion
     );
 
   }
 
 
-  // WRONG ANSWER
-
-  else {
-
-    document
-      .getElementById(
-        "feedback"
-      )
-      .innerHTML = `
-
-        <div class="mission">
-
-          <h3>
-            🙂 Try again
-          </h3>
+  let studentMessage = "";
 
 
-          <p>
-            That's not the best answer
-            for this situation.
-          </p>
+  if (studentText) {
 
+    studentMessage = `
 
-          <p>
-            Try another answer
-            or use the Hint.
-          </p>
+      <p class="student-response">
 
-        </div>
+        🧳 <strong>You:</strong>
+        ${escapeHTML(studentText)}
 
-      `;
+      </p>
+
+    `;
 
   }
+
+
+  document
+    .getElementById(
+      "feedback"
+    )
+    .innerHTML = `
+
+      <div class="mission">
+
+        <h3>
+          ✅ Excellent!
+        </h3>
+
+
+        ${studentMessage}
+
+
+        <p>
+          A natural sentence:
+        </p>
+
+
+        <p>
+          <strong>
+            ${item.answers[item.correct]}
+          </strong>
+        </p>
+
+
+        <p>
+          👩‍💼
+          <strong>Travel Agent:</strong>
+          ${item.response}
+        </p>
+
+
+        <button
+          class="continue-button"
+          onclick="nextQuestion()">
+
+          ${
+            currentQuestion <
+            questions.length - 1
+
+            ? "Continue ➜"
+
+            : "See My Result 🎉"
+          }
+
+        </button>
+
+      </div>
+
+    `;
+
+
+  speakText(
+    item.response
+  );
+
+}
+
+
+// ======================================================
+// WRONG CHOICE
+// ======================================================
+
+function wrongAnswer() {
+
+  document
+    .getElementById(
+      "feedback"
+    )
+    .innerHTML = `
+
+      <div class="mission">
+
+        <h3>
+          🙂 Try again
+        </h3>
+
+
+        <p>
+          That's not the best answer
+          for this situation.
+        </p>
+
+
+        <p>
+          Try another answer
+          or use the Hint.
+        </p>
+
+      </div>
+
+    `;
+
+}
+
+
+// ======================================================
+// TYPED ANSWER NEEDS HELP
+// ======================================================
+
+function typedAnswerNeedsHelp(
+  studentText
+) {
+
+  const item =
+    questions[currentQuestion];
+
+
+  document
+    .getElementById(
+      "feedback"
+    )
+    .innerHTML = `
+
+      <div class="mission">
+
+        <h3>
+          🙂 Good try!
+        </h3>
+
+
+        <p class="student-response">
+
+          🧳 <strong>You wrote:</strong>
+
+          ${escapeHTML(studentText)}
+
+        </p>
+
+
+        <p>
+          Try again.
+          You can use this pattern:
+        </p>
+
+
+        <p>
+          <strong>
+            ${item.hint2}
+          </strong>
+        </p>
+
+
+        <p>
+          Or press
+          <strong>Hint</strong>
+          for more help.
+        </p>
+
+      </div>
+
+    `;
 
 }
 
@@ -591,17 +876,15 @@ function showHint() {
   let hintText = "";
 
 
-  // HINT LEVEL 1
-
-  if (
-    hintLevel === 1
-  ) {
+  if (hintLevel === 1) {
 
     hintText = `
 
       <strong>
-        Hint 1:
+        Hint 1
       </strong>
+
+      <br><br>
 
       ${item.hint1}
 
@@ -610,16 +893,12 @@ function showHint() {
   }
 
 
-  // HINT LEVEL 2
-
-  else if (
-    hintLevel === 2
-  ) {
+  else if (hintLevel === 2) {
 
     hintText = `
 
       <strong>
-        Hint 2:
+        Hint 2
       </strong>
 
       <br><br>
@@ -631,14 +910,12 @@ function showHint() {
   }
 
 
-  // HINT LEVEL 3
-
   else {
 
     hintText = `
 
       <strong>
-        Hint 3:
+        Hint 3
       </strong>
 
       <br><br>
@@ -700,14 +977,10 @@ function nextQuestion() {
 
 
 // ======================================================
-// RESULT
+// RESULTS
 // ======================================================
 
 function showResult() {
-
-  // Safety:
-  // score can never display
-  // more than total questions.
 
   const finalScore =
     Math.min(
@@ -722,16 +995,22 @@ function showResult() {
 
 
       <div class="level">
-
         Lesson Completed
+      </div>
+
+
+      <div class="progress-track">
+
+        <div
+          class="progress-bar"
+          style="width:100%">
+        </div>
 
       </div>
 
 
       <h2>
-
         🎉 Excellent Work!
-
       </h2>
 
 
@@ -742,15 +1021,13 @@ function showResult() {
         </h3>
 
 
-        <p style="font-size:24px;">
+        <p class="result-score">
 
           <strong>
-
             ${finalScore}
             /
             ${questions.length}
             Tasks Completed
-
           </strong>
 
         </p>
@@ -767,52 +1044,45 @@ function showResult() {
         ✈️ I'd like to go to Da Nang.
       </p>
 
-
       <p>
         🏔️ I'd like to visit Ba Na Hills.
       </p>
-
 
       <p>
         🛏️ I'd like a double room.
       </p>
 
-
       <p>
         💵 How much is it?
       </p>
 
-
       <p>
         📅 I'd like to stay for three days.
       </p>
-
 
       <p>
         ✅ Yes, that's correct. Thank you.
       </p>
 
 
-      <br>
+      <div class="result-buttons">
+
+        <button
+          onclick="practiceAgain()">
+
+          🔄 Practice Again
+
+        </button>
 
 
-      <button
-        onclick="practiceAgain()">
+        <button
+          onclick="comingSoon()">
 
-        🔄 Practice Again
+          ➡️ Next Lesson
 
-      </button>
+        </button>
 
-
-      <br><br>
-
-
-      <button
-        onclick="comingSoon()">
-
-        ➡️ Next Lesson
-
-      </button>
+      </div>
 
 
     </section>
@@ -896,12 +1166,25 @@ function speakText(text) {
 
   }
 
-  else {
+}
 
-    alert(
-      "Your browser does not support speech."
+
+// ======================================================
+// BASIC SECURITY
+// ======================================================
+
+function escapeHTML(text) {
+
+  const div =
+    document.createElement(
+      "div"
     );
 
-  }
+
+  div.textContent =
+    text;
+
+
+  return div.innerHTML;
 
 }
