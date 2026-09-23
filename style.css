@@ -2,11 +2,20 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #e8f7ff, #f5fbff);
-  color: #183153;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #eaf8ff, #f6fbff);
+  color: #17324d;
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
 }
 
 .app {
@@ -15,11 +24,16 @@ body {
   flex-direction: column;
 }
 
+/* =========================
+   HEADER
+========================= */
+
 header {
-  background: #087f8c;
+  background: linear-gradient(135deg, #087f8c, #0b9aaa);
   color: white;
   text-align: center;
-  padding: 25px 15px;
+  padding: 26px 15px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.12);
 }
 
 header h1 {
@@ -30,43 +44,80 @@ header h1 {
 header p {
   margin: 0;
   font-size: 16px;
+  opacity: 0.95;
 }
+
+/* =========================
+   MAIN
+========================= */
 
 main {
   flex: 1;
+  width: 100%;
   display: flex;
   justify-content: center;
-  padding: 30px 15px;
+  align-items: flex-start;
+  padding: 35px 15px;
 }
+
+/* =========================
+   LESSON CARD
+========================= */
 
 .lesson-card {
   width: 100%;
-  max-width: 600px;
+  max-width: 650px;
   background: white;
-  border-radius: 22px;
-  padding: 25px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow:
+    0 15px 45px rgba(30, 70, 100, 0.14);
+  animation: appear 0.3s ease;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .level {
   display: inline-block;
-  background: #e2f6f8;
+  background: #dff7fa;
   color: #087f8c;
-  padding: 7px 14px;
-  border-radius: 20px;
-  font-weight: bold;
+  padding: 8px 15px;
+  border-radius: 30px;
+  font-weight: 700;
   font-size: 14px;
+  margin-bottom: 12px;
 }
 
 .lesson-card h2 {
+  margin: 12px 0 15px;
   font-size: 28px;
-  margin: 20px 0 10px;
+  line-height: 1.3;
+  color: #16385d;
 }
 
-.description {
+.lesson-card h3 {
+  color: #16385d;
+  margin-top: 22px;
+}
+
+.lesson-card p {
   font-size: 17px;
   line-height: 1.6;
 }
+
+/* =========================
+   ROLE CARDS
+========================= */
 
 .roles {
   display: flex;
@@ -77,14 +128,15 @@ main {
 .roles div {
   flex: 1;
   text-align: center;
-  background: #f3f9fb;
-  border-radius: 16px;
-  padding: 18px 10px;
+  background: #f1f9fb;
+  border: 1px solid #d9edf1;
+  border-radius: 18px;
+  padding: 20px 10px;
 }
 
 .roles span {
   display: block;
-  font-size: 42px;
+  font-size: 44px;
   margin-bottom: 8px;
 }
 
@@ -93,14 +145,19 @@ main {
 }
 
 .roles p {
-  margin: 6px 0 0;
+  margin: 5px 0 0;
+  font-size: 15px;
 }
 
+/* =========================
+   AI / MISSION BOX
+========================= */
+
 .mission {
-  background: #fff7dc;
-  border-left: 5px solid #f2b705;
-  padding: 15px 18px;
-  border-radius: 12px;
+  background: #fff8df;
+  border-left: 5px solid #f4b400;
+  padding: 18px 20px;
+  border-radius: 14px;
   margin: 20px 0;
 }
 
@@ -108,44 +165,202 @@ main {
   margin-top: 0;
 }
 
-.mission p {
-  line-height: 1.5;
+.mission p:last-child {
   margin-bottom: 0;
 }
 
-#startButton {
-  width: 100%;
+/* =========================
+   ALL BUTTONS
+========================= */
+
+.lesson-card button {
   border: none;
+  border-radius: 13px;
+  padding: 14px 18px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.lesson-card button:hover {
+  transform: translateY(-1px);
+}
+
+.lesson-card button:active {
+  transform: translateY(1px);
+}
+
+/* =========================
+   START BUTTON
+========================= */
+
+#startButton,
+#beginConversation {
+  width: 100%;
   background: #087f8c;
   color: white;
   padding: 17px;
-  border-radius: 14px;
-  font-size: 19px;
-  font-weight: bold;
-  cursor: pointer;
+  font-size: 18px;
+  margin-top: 10px;
+  box-shadow: 0 5px 14px rgba(8, 127, 140, 0.22);
 }
 
-#startButton:hover {
-  background: #056b75;
+#startButton:hover,
+#beginConversation:hover {
+  background: #066c77;
 }
+
+/* =========================
+   ANSWER BUTTONS
+========================= */
+
+#answerArea button {
+  background: #f7fafc;
+  color: #17324d;
+  border: 2px solid #d9e6ec !important;
+  border-radius: 14px !important;
+  text-align: left;
+  line-height: 1.4;
+  min-height: 54px;
+}
+
+#answerArea button:hover {
+  background: #eaf8fa;
+  border-color: #087f8c !important;
+  box-shadow: 0 4px 12px rgba(8, 127, 140, 0.12);
+}
+
+/* =========================
+   LISTEN + HINT
+========================= */
+
+.lesson-card button[onclick="listenQuestion()"] {
+  background: #e6f7fa;
+  color: #087f8c;
+  border: 1px solid #bde6eb;
+}
+
+.lesson-card button[onclick="showHint()"] {
+  background: #fff1bd;
+  color: #755500;
+  border: 1px solid #f0d36c;
+}
+
+/* =========================
+   CONTINUE / RESULT
+========================= */
+
+.mission button {
+  background: #087f8c;
+  color: white;
+  margin-top: 8px;
+}
+
+.mission button:hover {
+  background: #066c77;
+}
+
+/* =========================
+   RESULT BUTTONS
+========================= */
+
+.lesson-card button[onclick="practiceAgain()"] {
+  background: #087f8c;
+  color: white;
+  min-width: 180px;
+}
+
+.lesson-card button[onclick="comingSoon()"] {
+  background: #eef3f6;
+  color: #17324d;
+  border: 1px solid #d4e0e6;
+  min-width: 180px;
+}
+
+/* =========================
+   FEEDBACK
+========================= */
+
+#feedback {
+  animation: appear 0.25s ease;
+}
+
+/* =========================
+   FOOTER
+========================= */
 
 footer {
   text-align: center;
-  padding: 20px;
-  color: #607080;
+  padding: 22px 15px;
+  color: #607789;
   font-size: 14px;
 }
 
+/* =========================
+   MOBILE
+========================= */
+
 @media (max-width: 600px) {
+
+  header {
+    padding: 20px 12px;
+  }
+
   header h1 {
-    font-size: 24px;
+    font-size: 23px;
+  }
+
+  header p {
+    font-size: 14px;
+  }
+
+  main {
+    padding: 18px 10px;
+  }
+
+  .lesson-card {
+    padding: 20px 16px;
+    border-radius: 18px;
   }
 
   .lesson-card h2 {
     font-size: 23px;
   }
 
-  .lesson-card {
-    padding: 20px;
+  .lesson-card p {
+    font-size: 16px;
   }
+
+  .roles {
+    flex-direction: column;
+  }
+
+  .lesson-card button {
+    min-height: 48px;
+  }
+
+  #answerArea button {
+    font-size: 16px !important;
+  }
+
+}
+
+/* =========================
+   SMALL PHONE
+========================= */
+
+@media (max-width: 380px) {
+
+  .lesson-card {
+    padding: 17px 13px;
+  }
+
+  .lesson-card h2 {
+    font-size: 21px;
+  }
+
 }
