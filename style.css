@@ -1,0 +1,151 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #e8f7ff, #f5fbff);
+  color: #183153;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  background: #087f8c;
+  color: white;
+  text-align: center;
+  padding: 25px 15px;
+}
+
+header h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+}
+
+header p {
+  margin: 0;
+  font-size: 16px;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 30px 15px;
+}
+
+.lesson-card {
+  width: 100%;
+  max-width: 600px;
+  background: white;
+  border-radius: 22px;
+  padding: 25px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+.level {
+  display: inline-block;
+  background: #e2f6f8;
+  color: #087f8c;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.lesson-card h2 {
+  font-size: 28px;
+  margin: 20px 0 10px;
+}
+
+.description {
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.roles {
+  display: flex;
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.roles div {
+  flex: 1;
+  text-align: center;
+  background: #f3f9fb;
+  border-radius: 16px;
+  padding: 18px 10px;
+}
+
+.roles span {
+  display: block;
+  font-size: 42px;
+  margin-bottom: 8px;
+}
+
+.roles strong {
+  font-size: 18px;
+}
+
+.roles p {
+  margin: 6px 0 0;
+}
+
+.mission {
+  background: #fff7dc;
+  border-left: 5px solid #f2b705;
+  padding: 15px 18px;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.mission h3 {
+  margin-top: 0;
+}
+
+.mission p {
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+#startButton {
+  width: 100%;
+  border: none;
+  background: #087f8c;
+  color: white;
+  padding: 17px;
+  border-radius: 14px;
+  font-size: 19px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#startButton:hover {
+  background: #056b75;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #607080;
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 24px;
+  }
+
+  .lesson-card h2 {
+    font-size: 23px;
+  }
+
+  .lesson-card {
+    padding: 20px;
+  }
+}
