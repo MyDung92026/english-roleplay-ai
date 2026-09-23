@@ -2,6 +2,97 @@ const startButton = document.getElementById("startButton");
 
 startButton.addEventListener("click", startLesson);
 
+const questions = [
+  {
+    number: 1,
+    question: "Where would you like to go?",
+    answers: [
+      "I'd like to go to Da Nang.",
+      "I like chicken.",
+      "I am sixteen years old."
+    ],
+    correct: 0,
+    hint1: "Destination: Da Nang",
+    hint2: "I'd like to go to ______.",
+    response: "Great! Da Nang is a beautiful city."
+  },
+
+  {
+    number: 2,
+    question: "What would you like to do in Da Nang?",
+    answers: [
+      "I'd like to visit Ba Na Hills.",
+      "I'd like a double room.",
+      "Three days."
+    ],
+    correct: 0,
+    hint1: "Activity: Visit Ba Na Hills",
+    hint2: "I'd like to visit ______.",
+    response: "Excellent! Ba Na Hills is a great choice."
+  },
+
+  {
+    number: 3,
+    question: "What kind of room would you like?",
+    answers: [
+      "I'd like a double room.",
+      "I'd like to visit Ba Na Hills.",
+      "I go to school every day."
+    ],
+    correct: 0,
+    hint1: "Room: Double room",
+    hint2: "I'd like a ______ room.",
+    response: "Great! A double room is available."
+  },
+
+  {
+    number: 4,
+    question: "Would you like to know the price?",
+    answers: [
+      "How much is it?",
+      "Where is my school?",
+      "I like swimming."
+    ],
+    correct: 0,
+    hint1: "Ask about the price.",
+    hint2: "How ______ is it?",
+    response: "It is forty-five dollars per night."
+  },
+
+  {
+    number: 5,
+    question: "How long would you like to stay?",
+    answers: [
+      "I'd like to stay for three days.",
+      "I'd like a double room.",
+      "My name is Nam."
+    ],
+    correct: 0,
+    hint1: "Stay: 3 days",
+    hint2: "I'd like to stay for ______ days.",
+    response: "Wonderful! Three days in Da Nang."
+  },
+
+  {
+    number: 6,
+    question: "Let me confirm your booking. Is everything correct?",
+    answers: [
+      "Yes, that's correct. Thank you.",
+      "I am a student.",
+      "I don't have a bicycle."
+    ],
+    correct: 0,
+    hint1: "Confirm the booking.",
+    hint2: "Yes, that's ______. Thank you.",
+    response: "You're welcome. Have a wonderful trip to Da Nang!"
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let hintLevel = 0;
+
+
 function startLesson() {
 
   document.querySelector("main").innerHTML = `
@@ -25,10 +116,15 @@ function startLesson() {
         </p>
       </div>
 
-      <h3>🎯 Your mission</h3>
+      <h3>🎯 Your Mission</h3>
 
       <p>
-        Book a trip to Da Nang by talking with the travel agent.
+        Book a trip to Da Nang by talking with
+        the travel agent.
+      </p>
+
+      <p>
+        Complete all 6 conversation tasks.
       </p>
 
       <button id="beginConversation">
@@ -46,138 +142,184 @@ function startLesson() {
 
 function beginConversation() {
 
+  currentQuestion = 0;
+  score = 0;
+
+  showQuestion();
+}
+
+
+function showQuestion() {
+
+  hintLevel = 0;
+
+  const item = questions[currentQuestion];
+
   document.querySelector("main").innerHTML = `
     <section class="lesson-card">
 
       <div class="level">
-        Conversation 1 / 6
+        Conversation ${item.number} / 6
       </div>
 
       <h2>👩‍💼 Travel Agent</h2>
 
       <div class="mission">
-
-        <p style="font-size:20px;">
-          🔊 Good morning!
-        </p>
-
         <p style="font-size:22px;">
-          <strong>
-            Where would you like to go?
-          </strong>
+          <strong>${item.question}</strong>
         </p>
-
       </div>
 
-      <button onclick="speakQuestion()">
+      <button onclick="listenQuestion()">
         🔊 Listen
       </button>
 
-      <br><br>
-
       <h3>Choose your answer:</h3>
 
-      <button onclick="correctAnswer()">
-        I'd like to go to Da Nang.
-      </button>
+      <div id="answerArea"></div>
 
-      <br><br>
-
-      <button onclick="wrongAnswer()">
-        I like chicken.
-      </button>
-
-      <br><br>
-
-      <button onclick="wrongAnswer()">
-        I am sixteen years old.
-      </button>
-
-      <br><br>
+      <br>
 
       <button onclick="showHint()">
         💡 Hint
       </button>
 
-      <div id="feedback"
-           style="margin-top:20px;
-                  font-size:18px;">
+      <div
+        id="feedback"
+        style="margin-top:20px;">
       </div>
 
     </section>
   `;
+
+  const answerArea =
+    document.getElementById("answerArea");
+
+  item.answers.forEach((answer, index) => {
+
+    const button =
+      document.createElement("button");
+
+    button.textContent = answer;
+
+    button.style.display = "block";
+    button.style.width = "100%";
+    button.style.margin = "10px 0";
+    button.style.padding = "14px";
+    button.style.fontSize = "17px";
+    button.style.cursor = "pointer";
+
+    button.onclick = function () {
+      checkAnswer(index);
+    };
+
+    answerArea.appendChild(button);
+  });
+
+  speakText(item.question);
 }
 
 
-function speakQuestion() {
+function listenQuestion() {
 
-  const text =
-    "Good morning. Where would you like to go?";
+  const item = questions[currentQuestion];
 
-  const speech =
-    new SpeechSynthesisUtterance(text);
-
-  speech.lang = "en-US";
-  speech.rate = 0.85;
-
-  window.speechSynthesis.speak(speech);
+  speakText(item.question);
 }
 
 
-function correctAnswer() {
+function checkAnswer(selectedIndex) {
 
-  document.getElementById("feedback").innerHTML = `
-    <div class="mission">
+  const item = questions[currentQuestion];
 
-      <h3>✅ Great job!</h3>
+  if (selectedIndex === item.correct) {
 
-      <p>
-        I'd like to go to Da Nang.
-      </p>
+    score++;
 
-      <button onclick="nextQuestion()">
-        Continue ➜
-      </button>
+    document.getElementById("feedback").innerHTML = `
+      <div class="mission">
 
-    </div>
-  `;
+        <h3>✅ Excellent!</h3>
 
-  speakText(
-    "Great! Da Nang is a beautiful city."
-  );
-}
+        <p>
+          ${item.answers[item.correct]}
+        </p>
 
+        <p>
+          👩‍💼 ${item.response}
+        </p>
 
-function wrongAnswer() {
+        <button onclick="nextQuestion()">
+          ${
+            currentQuestion < questions.length - 1
+              ? "Continue ➜"
+              : "See My Result 🎉"
+          }
+        </button>
 
-  document.getElementById("feedback").innerHTML = `
-    <div class="mission">
+      </div>
+    `;
 
-      <h3>🙂 Try again</h3>
+    speakText(item.response);
 
-      <p>
-        Think about the destination.
-      </p>
+  } else {
 
-    </div>
-  `;
+    document.getElementById("feedback").innerHTML = `
+      <div class="mission">
+
+        <h3>🙂 Try again</h3>
+
+        <p>
+          That's not the best answer for this situation.
+        </p>
+
+        <p>
+          Try another answer or use the Hint.
+        </p>
+
+      </div>
+    `;
+  }
 }
 
 
 function showHint() {
 
+  const item = questions[currentQuestion];
+
+  hintLevel++;
+
+  let hintText = "";
+
+  if (hintLevel === 1) {
+
+    hintText = `
+      <strong>Hint 1:</strong>
+      ${item.hint1}
+    `;
+
+  } else if (hintLevel === 2) {
+
+    hintText = `
+      <strong>Hint 2:</strong><br><br>
+      ${item.hint2}
+    `;
+
+  } else {
+
+    hintText = `
+      <strong>Hint 3:</strong><br><br>
+      ${item.answers[item.correct]}
+    `;
+
+  }
+
   document.getElementById("feedback").innerHTML = `
     <div class="mission">
 
-      <h3>💡 Hint</h3>
+      <h3>💡 Need some help?</h3>
 
-      <p>
-        Look at the destination.
-      </p>
-
-      <p>
-        I'd like to go to ______.
-      </p>
+      <p>${hintText}</p>
 
     </div>
   `;
@@ -186,111 +328,91 @@ function showHint() {
 
 function nextQuestion() {
 
+  if (currentQuestion < questions.length - 1) {
+
+    currentQuestion++;
+
+    showQuestion();
+
+  } else {
+
+    showResult();
+  }
+}
+
+
+function showResult() {
+
   document.querySelector("main").innerHTML = `
     <section class="lesson-card">
 
       <div class="level">
-        Conversation 2 / 6
+        Lesson Completed
       </div>
 
-      <h2>👩‍💼 Travel Agent</h2>
+      <h2>🎉 Excellent Work!</h2>
 
       <div class="mission">
 
-        <p style="font-size:22px;">
+        <h3>🏆 Your Result</h3>
+
+        <p style="font-size:24px;">
           <strong>
-            What would you like to do
-            in Da Nang?
+            ${score} / 6 Tasks Completed
           </strong>
         </p>
 
       </div>
 
-      <button onclick="speakText(
-        'What would you like to do in Da Nang?'
-      )">
-        🔊 Listen
+      <h3>⭐ Useful Sentences</h3>
+
+      <p>✈️ I'd like to go to Da Nang.</p>
+
+      <p>🏔️ I'd like to visit Ba Na Hills.</p>
+
+      <p>🛏️ I'd like a double room.</p>
+
+      <p>💵 How much is it?</p>
+
+      <p>📅 I'd like to stay for three days.</p>
+
+      <p>✅ Yes, that's correct. Thank you.</p>
+
+      <br>
+
+      <button onclick="practiceAgain()">
+        🔄 Practice Again
       </button>
 
       <br><br>
 
-      <button onclick="activityCorrect()">
-        I'd like to visit Ba Na Hills.
+      <button onclick="comingSoon()">
+        ➡️ Next Lesson
       </button>
-
-      <br><br>
-
-      <button onclick="wrongAnswer()">
-        I'd like a double room.
-      </button>
-
-      <br><br>
-
-      <button onclick="wrongAnswer()">
-        Three days.
-      </button>
-
-      <br><br>
-
-      <button onclick="activityHint()">
-        💡 Hint
-      </button>
-
-      <div id="feedback"
-           style="margin-top:20px;">
-      </div>
 
     </section>
   `;
 
   speakText(
-    "What would you like to do in Da Nang?"
+    "Excellent work! You completed the lesson."
   );
 }
 
 
-function activityCorrect() {
+function practiceAgain() {
 
-  document.getElementById("feedback").innerHTML = `
-    <div class="mission">
+  currentQuestion = 0;
+  score = 0;
 
-      <h3>✅ Excellent!</h3>
-
-      <p>
-        I'd like to visit Ba Na Hills.
-      </p>
-
-      <p>
-        🎉 You completed the first
-        two conversation tasks.
-      </p>
-
-    </div>
-  `;
-
-  speakText(
-    "Excellent! Ba Na Hills is a great choice."
-  );
+  showQuestion();
 }
 
 
-function activityHint() {
+function comingSoon() {
 
-  document.getElementById("feedback").innerHTML = `
-    <div class="mission">
-
-      <h3>💡 Hint</h3>
-
-      <p>
-        Activity: Visit Ba Na Hills
-      </p>
-
-      <p>
-        I'd like to visit ______.
-      </p>
-
-    </div>
-  `;
+  alert(
+    "Lesson 2 is coming soon!"
+  );
 }
 
 
@@ -307,12 +429,6 @@ function speakText(text) {
     speech.rate = 0.85;
 
     window.speechSynthesis.speak(speech);
-
-  } else {
-
-    alert(
-      "Your browser does not support speech."
-    );
 
   }
 }
