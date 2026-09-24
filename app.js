@@ -516,8 +516,7 @@ function showSelectedTour(
 
       <button
         class="continue-button"
-        onclick="roleComingNext()">
-
+       onclick="showRoleSelection(${tour.id}, '${activity}')"
         Continue ➜
 
       </button>
@@ -624,6 +623,325 @@ function capitalizeFirst(text) {
     text.charAt(0).toUpperCase()
     +
     text.slice(1)
+  );
+
+}// ======================================================
+// ROLE SELECTION
+// ======================================================
+
+function showRoleSelection(
+  tourId,
+  activity
+) {
+
+  const tour =
+    tours.find(
+      item =>
+        item.id === tourId
+    );
+
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+
+      <div class="level">
+        🎭 CHOOSE YOUR ROLE
+      </div>
+
+
+      <h2>
+        ✈️ ${tour.destination}
+      </h2>
+
+
+      <p>
+        Choose the role you want
+        to practice.
+      </p>
+
+
+      <div class="role-choice-container">
+
+
+        <div class="role-choice-card">
+
+          <div class="role-big-icon">
+            🧳
+          </div>
+
+          <h3>
+            Tourist
+          </h3>
+
+          <p>
+            You want to book a tour.
+          </p>
+
+          <p class="ai-role-text">
+            🤖 AI will be the
+            <strong>Travel Agent</strong>.
+          </p>
+
+          <button
+            onclick="selectRole(
+              ${tour.id},
+              '${activity}',
+              'tourist'
+            )">
+
+            I am the Tourist
+
+          </button>
+
+        </div>
+
+
+        <div class="role-choice-card">
+
+          <div class="role-big-icon">
+            👩‍💼
+          </div>
+
+          <h3>
+            Travel Agent
+          </h3>
+
+          <p>
+            You help a tourist
+            book a tour.
+          </p>
+
+          <p class="ai-role-text">
+            🤖 AI will be the
+            <strong>Tourist</strong>.
+          </p>
+
+          <button
+            onclick="selectRole(
+              ${tour.id},
+              '${activity}',
+              'agent'
+            )">
+
+            I am the Travel Agent
+
+          </button>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="back-area">
+
+        <button
+          class="back-button"
+          onclick="showSelectedTour(
+            tours.find(t => t.id === ${tour.id}),
+            '${activity}'
+          )">
+
+          ← Back
+
+        </button>
+
+      </div>
+
+
+    </section>
+
+  `;
+
+}
+
+
+// ======================================================
+// SAVE STUDENT ROLE
+// ======================================================
+
+function selectRole(
+  tourId,
+  activity,
+  studentRole
+) {
+
+  const tour =
+    tours.find(
+      item =>
+        item.id === tourId
+    );
+
+
+  const studentRoleName =
+    studentRole === "tourist"
+      ? "Tourist"
+      : "Travel Agent";
+
+
+  const aiRoleName =
+    studentRole === "tourist"
+      ? "Travel Agent"
+      : "Tourist";
+
+
+  const studentIcon =
+    studentRole === "tourist"
+      ? "🧳"
+      : "👩‍💼";
+
+
+  const aiIcon =
+    studentRole === "tourist"
+      ? "👩‍💼"
+      : "🧳";
+
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+
+      <div class="level">
+        ${
+          activity === "choose"
+            ? "👆 CHOOSE"
+            : "✍️ WRITE"
+        }
+      </div>
+
+
+      <h2>
+        ✈️ ${tour.destination}
+      </h2>
+
+
+      <div class="role-status">
+
+
+        <div class="role-status-box">
+
+          <span>
+            ${studentIcon}
+          </span>
+
+          <small>
+            YOU
+          </small>
+
+          <strong>
+            ${studentRoleName}
+          </strong>
+
+        </div>
+
+
+        <div class="role-switch">
+          ↔
+        </div>
+
+
+        <div class="role-status-box">
+
+          <span>
+            ${aiIcon}
+          </span>
+
+          <small>
+            AI
+          </small>
+
+          <strong>
+            ${aiRoleName}
+          </strong>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="mission">
+
+        <h3>
+          ✅ Ready!
+        </h3>
+
+        <p>
+          <strong>
+            Destination:
+          </strong>
+
+          ${tour.destination}
+        </p>
+
+
+        <p>
+          You are the
+          <strong>
+            ${studentRoleName}
+          </strong>.
+        </p>
+
+
+        <p>
+          AI is the
+          <strong>
+            ${aiRoleName}
+          </strong>.
+        </p>
+
+      </div>
+
+
+      <p>
+        The conversation will start
+        in the next step.
+      </p>
+
+
+      <button
+        class="continue-button"
+        onclick="conversationComingNext()">
+
+        Start Conversation ➜
+
+      </button>
+
+
+      <div class="back-area">
+
+        <button
+          class="back-button"
+          onclick="showRoleSelection(
+            ${tour.id},
+            '${activity}'
+          )">
+
+          ← Change Role
+
+        </button>
+
+      </div>
+
+
+    </section>
+
+  `;
+
+}
+
+
+// ======================================================
+// CONVERSATION PLACEHOLDER
+// ======================================================
+
+function conversationComingNext() {
+
+  alert(
+    "Role selection works! We will build the conversation next."
   );
 
 }
