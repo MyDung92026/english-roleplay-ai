@@ -471,9 +471,9 @@ function showSelectedTour() {
       </div>
 
 
-      <h2>
-        ✈️ ${tour.destination}
-      </h2>
+    <h2>
+  🌏 ${tour.country}
+</h2>
 
 
       <div class="mission">
