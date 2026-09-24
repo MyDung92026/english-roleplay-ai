@@ -4497,75 +4497,622 @@ function showSimpleWriteStep() {
     );
 
 
-  document
-    .getElementById("simpleSendButton")
-    .addEventListener(
-      "click",
-      function () {
-
-        const answer =
-          document
-            .getElementById("simpleStudentAnswer")
-            .value
-            .trim();
-
-        if (!answer) {
-
-          document
-            .getElementById("simpleFeedback")
-            .innerHTML = `
-
-              <div class="repeat-feedback">
-
-                <h3>
-                  🔄 Repeat, please.
-                </h3>
-
-                <p>
-                  Please write an answer first.
-                </p>
-
-              </div>
-
-            `;
-
-          playRepeatFeedback();
-
-          return;
-
-        }
-
-
-        document
-          .getElementById("simpleFeedback")
-          .innerHTML = `
-
-            <div class="success-feedback">
-
-              <h3>
-                👍 Answer received!
-              </h3>
-
-              <p class="student-response">
-
-                <strong>You:</strong>
-                ${escapeHTML(answer)}
-
-              </p>
-
-            </div>
-
-          `;
-
-      }
-    );
-
-
+ document
+  .getElementById("simpleSendButton")
+  .addEventListener(
+    "click",
+    checkSimpleWriteAnswer
+  );
   document
     .getElementById("simpleStudentAnswer")
     .focus();
 
 
   speakText(task.ai);
+
+}
+
+// ======================================================
+// SIMPLE WRITE - FLEXIBLE CHECKER
+// ======================================================
+
+function checkSimpleWriteAnswer() {
+
+  const input =
+    document.getElementById("simpleStudentAnswer");
+
+  if (!input) return;
+
+  const studentText = input.value.trim();
+
+  if (!studentText) {
+    showSimpleRepeat(
+      "Please write an answer first."
+    );
+    return;
+  }
+
+  const result =
+    evaluateSimpleWriteAnswer(
+      simpleWriteStep,
+      studentText
+    );
+
+  if (result === "excellent") {
+
+    input.disabled = true;
+
+    document.getElementById(
+      "simpleSendButton"
+    ).disabled = true;
+
+    playExcellentFeedback();
+
+    showSimpleSuccess(
+      "🌟 Excellent!",
+      studentText
+    );
+
+    return;
+  }
+
+
+  if (result === "good") {
+
+    input.disabled = true;
+
+    document.getElementById(
+      "simpleSendButton"
+    ).disabled = true;
+
+    playGoodFeedback();
+
+    showSimpleSuccess(
+      "👍 Good!",
+      studentText
+    );
+
+    return;
+  }
+
+
+  showSimpleRepeat(
+    "Try again, or press Idea for help."
+  );
+
+}
+
+
+// ======================================================
+// CHECK EACH OF THE 10 STEPS
+// ======================================================
+
+function evaluateSimpleWriteAnswer(
+  step,
+  answer
+) {
+
+  const text =
+    normalizeText(answer);
+
+
+  // STEP 1 - BOOK A TOUR
+  if (step === 0) {
+
+    if (
+      text.includes("book") &&
+      text.includes("tour")
+    ) {
+
+      if (
+        text.includes("i'd like") ||
+        text.includes("i would like") ||
+        text.includes("i want")
+      ) {
+        return "excellent";
+      }
+
+      return "good";
+    }
+
+    return "repeat";
+  }
+
+
+  // STEP 2 - DESTINATION
+  if (step === 1) {
+
+    if (
+      text.includes("go to") ||
+      text.includes("visit")
+    ) {
+
+      if (
+        text.includes("i'd like") ||
+        text.includes("i would like") ||
+        text.includes("i want")
+      ) {
+        return "excellent";
+      }
+
+      return "good";
+    }
+
+    // Accept a short place name.
+    if (
+      text.split(" ").length <= 5 &&
+      text.length >= 2
+    ) {
+      return "good";
+    }
+
+    return "repeat";
+  }
+
+
+  // STEP 3 - WHEN
+  if (step === 2) {
+
+    const timeWords = [
+      "today",
+      "tomorrow",
+      "weekend",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+      "sunday",
+      "week",
+      "month",
+      "january",
+      "february",
+      "march",
+      "april",
+      "may",
+      "june",
+      "july",
+      "august",
+      "september",
+      "october",
+      "november",
+      "december"
+    ];
+
+    if (
+      timeWords.some(
+        word => text.includes(word)
+      )
+    ) {
+
+      if (
+        text.includes("i'd like") ||
+        text.includes("i would like") ||
+        text.includes("i want") ||
+        text.includes("i'm going") ||
+        text.includes("i am going")
+      ) {
+        return "excellent";
+      }
+
+      return "good";
+    }
+
+    return "repeat";
+  }
+
+
+  // STEP 4 - NUMBER OF PEOPLE
+  if (step === 3) {
+
+    const peopleWords = [
+      "one",
+      "two",
+      "three",
+      "four",
+      "five",
+      "six",
+      "seven",
+      "eight",
+      "nine",
+      "ten",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ];
+
+    const hasNumber =
+      peopleWords.some(
+        word => text.includes(word)
+      );
+
+    if (hasNumber) {
+
+      if (
+        text.includes("people") ||
+        text.includes("person")
+      ) {
+        return "excellent";
+      }
+
+      return "good";
+    }
+
+    return "repeat";
+  }
+
+
+  // STEP 5 - ACTIVITY
+  if (step === 4) {
+
+    const activityWords = [
+      "visit",
+      "go",
+      "see",
+      "swim",
+      "swimming",
+      "shop",
+      "shopping",
+      "eat",
+      "try",
+      "explore",
+      "walk",
+      "relax",
+      "sightseeing"
+    ];
+
+    if (
+      activityWords.some(
+        word => text.includes(word)
+      )
+    ) {
+
+      if (
+        text.includes("i'd like") ||
+        text.includes("i would like") ||
+        text.includes("i want")
+      ) {
+        return "excellent";
+      }
+
+      return "good";
+    }
+
+    return "repeat";
+  }
+
+
+  // STEP 6 - ACCOMMODATION
+  if (step === 5) {
+
+    const places = [
+      "hotel",
+      "homestay",
+      "hostel",
+      "resort",
+      "guesthouse",
+      "guest house",
+      "apartment",
+      "motel",
+      "villa"
+    ];
+
+    if (
+      places.some(
+        place => text.includes(place)
+      )
+    ) {
+
+      if (
+        text.includes("stay")
+      ) {
+        return "excellent";
+      }
+
+      return "good";
+    }
+
+    return "repeat";
+  }
+
+
+  // STEP 7 - ROOM
+  if (step === 6) {
+
+    if (
+      text.includes("room") ||
+      text.includes("suite")
+    ) {
+
+      if (
+        text.includes("i'd like") ||
+        text.includes("i would like") ||
+        text.includes("i want")
+      ) {
+        return "excellent";
+      }
+
+      return "good";
+    }
+
+    return "repeat";
+  }
+
+
+  // STEP 8 - LENGTH OF STAY
+  if (step === 7) {
+
+    const stayPattern =
+      /\b(one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+(day|days|night|nights|week|weeks)\b/;
+
+    if (
+      stayPattern.test(text)
+    ) {
+
+      if (
+        text.includes("stay")
+      ) {
+        return "excellent";
+      }
+
+      return "good";
+    }
+
+    return "repeat";
+  }
+
+
+  // STEP 9 - ACCEPT PRICE
+  if (step === 8) {
+
+    if (
+      text.includes("yes") ||
+      text.includes("okay") ||
+      text.includes("ok") ||
+      text.includes("that's fine") ||
+      text.includes("that is fine")
+    ) {
+
+      if (
+        text.includes("yes") &&
+        (
+          text.includes("okay") ||
+          text.includes("fine")
+        )
+      ) {
+        return "excellent";
+      }
+
+      return "good";
+    }
+
+    return "repeat";
+  }
+
+
+  // STEP 10 - THANK YOU
+  if (step === 9) {
+
+    if (
+      text.includes("thank you") ||
+      text.includes("thanks")
+    ) {
+
+      if (
+        text.includes("very much") ||
+        text.includes("a lot")
+      ) {
+        return "excellent";
+      }
+
+      return "good";
+    }
+
+    return "repeat";
+  }
+
+
+  return "repeat";
+}
+
+
+// ======================================================
+// SUCCESS
+// ======================================================
+
+function showSimpleSuccess(
+  title,
+  studentText
+) {
+
+  const task =
+    simpleWriteTasks[simpleWriteStep];
+
+  document
+    .getElementById("simpleFeedback")
+    .innerHTML = `
+
+      <div class="success-feedback">
+
+        <h3>
+          ${title}
+        </h3>
+
+        <p class="student-response">
+
+          <strong>You:</strong>
+          ${escapeHTML(studentText)}
+
+        </p>
+
+        <p>
+          Sample answer:
+        </p>
+
+        <p class="model-answer">
+
+          <strong>
+            ${task.model}
+          </strong>
+
+        </p>
+
+        <button
+          class="continue-button"
+          onclick="nextSimpleWriteStep()">
+
+          ${
+            simpleWriteStep <
+            simpleWriteTasks.length - 1
+
+              ? "Continue ➜"
+              : "Finish 🎉"
+          }
+
+        </button>
+
+      </div>
+
+    `;
+
+}
+
+
+// ======================================================
+// REPEAT
+// ======================================================
+
+function showSimpleRepeat(message) {
+
+  playRepeatFeedback();
+
+  document
+    .getElementById("simpleFeedback")
+    .innerHTML = `
+
+      <div class="repeat-feedback">
+
+        <h3>
+          🔄 Repeat, please.
+        </h3>
+
+        <p>
+          ${message}
+        </p>
+
+      </div>
+
+    `;
+
+}
+
+
+// ======================================================
+// NEXT STEP
+// ======================================================
+
+function nextSimpleWriteStep() {
+
+  if (
+    simpleWriteStep <
+    simpleWriteTasks.length - 1
+  ) {
+
+    simpleWriteStep++;
+
+    showSimpleWriteStep();
+
+    return;
+  }
+
+  showSimpleWriteResult();
+
+}
+
+
+// ======================================================
+// RESULT
+// ======================================================
+
+function showSimpleWriteResult() {
+
+  currentListenText = "";
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+      <div class="level">
+        ✍️ WRITE COMPLETED
+      </div>
+
+      <div class="progress-track">
+
+        <div
+          class="progress-bar"
+          style="width:100%">
+        </div>
+
+      </div>
+
+      <h2>
+        🎉 Great Work!
+      </h2>
+
+      <div class="mission">
+
+        <h3>
+          🏆 BOOK A TOUR completed!
+        </h3>
+
+        <p>
+          You completed all 10 steps
+          of the conversation.
+        </p>
+
+      </div>
+
+      <button
+        class="continue-button"
+        onclick="startSimpleWriteConversation()">
+
+        🔄 Practice Again
+
+      </button>
+
+      <div class="back-area">
+
+        <button
+          class="back-button"
+          onclick="openBookTour()">
+
+          🏠 BOOK A TOUR
+
+        </button>
+
+      </div>
+
+    </section>
+
+  `;
+
+  window.setTimeout(
+    function () {
+
+      speakText(
+        "Great work! You completed the writing practice."
+      );
+
+    },
+    300
+  );
 
 }
