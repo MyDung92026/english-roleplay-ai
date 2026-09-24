@@ -126,7 +126,7 @@ let conversationScore = 0;
 
 let ideaVisible = false;
 
-
+let currentListenText = "";
 // ======================================================
 // BOOK A TOUR HOME
 // ======================================================
@@ -1333,7 +1333,7 @@ function showWriteStep() {
 
   const task =
     tasks[conversationStep];
-
+currentListenText = task.ai;
 
   const aiRole =
     currentStudentRole === "tourist"
@@ -1425,15 +1425,14 @@ function showWriteStep() {
         </p>
 
 
-        <button
-          class="listen-button"
-          onclick="speakText(
-            ${JSON.stringify(task.ai)}
-          )">
+       <button
+  type="button"
+  class="listen-button"
+  onclick="listenAgain()">
 
-          🔊 Listen
+  🔊 Listen
 
-        </button>
+</button>
 
       </div>
 
@@ -2276,17 +2275,56 @@ function normalizeText(text) {
 
 // Đọc tiếng Anh bằng giọng của trình duyệt.
 // Nút Listen có thể gọi hàm này bao nhiêu lần cũng được.
+// ======================================================
+// LISTEN AGAIN
+// ======================================================
 
-function speakText(text) {
+function listenAgain() {
 
-  if (!("speechSynthesis" in window)) {
+  if (!currentListenText) {
     return;
   }
 
+  // Stop the previous voice first
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+  }
+
+  // Small delay helps Chrome replay
+  // the same sentence reliably.
+  setTimeout(
+    function () {
+
+      speakText(
+        currentListenText
+      );
+
+    },
+    100
+  );
+
+}
+function speakText(text) {
+
+  if (!("speechSynthesis" in window)) {
+
+    alert(
+      "Your browser does not support text-to-speech."
+    );
+
+    return;
+
+  }
+
+
   window.speechSynthesis.cancel();
 
+
   const speech =
-    new SpeechSynthesisUtterance(text);
+    new SpeechSynthesisUtterance(
+      String(text)
+    );
+
 
   speech.lang = "en-US";
 
@@ -2296,7 +2334,17 @@ function speakText(text) {
 
   speech.volume = 1;
 
-  window.speechSynthesis.speak(speech);
+
+  setTimeout(
+    function () {
+
+      window
+        .speechSynthesis
+        .speak(speech);
+
+    },
+    80
+  );
 
 }
 
