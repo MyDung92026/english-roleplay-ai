@@ -728,3 +728,319 @@ footer {
   }
 
 }
+/* =========================================
+   ROLE CHOICE
+========================================= */
+
+.role-choice-container {
+  display: flex;
+  gap: 16px;
+  margin: 22px 0;
+}
+
+.role-choice-card {
+  flex: 1;
+  background: #f4fafc;
+  border: 2px solid #d8eaef;
+  border-radius: 18px;
+  padding: 22px;
+  text-align: center;
+}
+
+.role-choice-card:hover {
+  border-color: #72c6cf;
+}
+
+.role-big-icon {
+  font-size: 48px;
+}
+
+.role-choice-card button {
+  background: #087f8c;
+  color: white;
+  width: 100%;
+}
+
+
+/* =========================================
+   CURRENT ROLES
+========================================= */
+
+.role-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.role-status-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f1f9fb;
+  border: 2px solid #d9edf1;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.role-status-box span {
+  font-size: 36px;
+}
+
+.role-status-box small {
+  margin: 7px 0 3px;
+  color: #6c8290;
+  font-weight: bold;
+}
+
+.role-status-box strong {
+  color: #16385d;
+}
+
+.role-switch {
+  font-size: 24px;
+  font-weight: bold;
+  color: #087f8c;
+}
+
+
+/* =========================================
+   PROGRESS
+========================================= */
+
+.progress-track {
+  width: 100%;
+  height: 9px;
+  background: #e4edf1;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 8px 0 22px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #0b9aaa;
+  border-radius: 20px;
+  transition: width 0.3s ease;
+}
+
+
+/* =========================================
+   CONVERSATION
+========================================= */
+
+.conversation-role-line {
+  background: #f4f7f9;
+  border-radius: 12px;
+  padding: 11px 14px;
+  margin-bottom: 18px;
+  font-size: 14px;
+}
+
+.conversation-role-line span {
+  padding: 0 8px;
+  color: #8ca0ac;
+}
+
+
+/* =========================================
+   AI MESSAGE
+========================================= */
+
+.ai-message {
+  background: #eaf8fa;
+  border: 2px solid #c9e9ed;
+  border-radius: 18px;
+  padding: 20px;
+  margin: 18px 0;
+}
+
+.ai-message p {
+  font-size: 20px;
+  margin-bottom: 14px;
+}
+
+.speaker-label {
+  color: #087f8c;
+  margin-bottom: 8px;
+}
+
+
+/* =========================================
+   WRITE BOX
+========================================= */
+
+.write-box {
+  background: #f8fbfc;
+  border: 2px solid #dce8ed;
+  border-radius: 18px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.write-box h3 {
+  margin-top: 0;
+}
+
+#studentAnswer {
+  width: 100%;
+  min-height: 56px;
+  padding: 15px;
+  border: 2px solid #c8dce3;
+  border-radius: 12px;
+  font-size: 17px;
+  background: white;
+  color: #17324d;
+  outline: none;
+  margin-bottom: 12px;
+}
+
+#studentAnswer:focus {
+  border-color: #087f8c;
+  box-shadow:
+    0 0 0 3px
+    rgba(8, 127, 140, 0.10);
+}
+
+.check-button {
+  width: 100%;
+  background: #087f8c !important;
+  color: white !important;
+  margin-bottom: 10px;
+}
+
+.idea-button {
+  width: 100%;
+  background: #fff1bd !important;
+  color: #705300 !important;
+  border: 1px solid #ebce64 !important;
+}
+
+
+/* =========================================
+   IDEA
+========================================= */
+
+.idea-panel {
+  background: #fff9df;
+  border: 2px solid #f0d979;
+  border-radius: 16px;
+  padding: 18px;
+  margin: 18px 0;
+}
+
+.idea-panel h3 {
+  margin-top: 0;
+}
+
+.idea-item {
+  background: white;
+  border-radius: 10px;
+  padding: 11px 13px;
+  margin: 8px 0;
+}
+
+
+/* =========================================
+   FEEDBACK
+========================================= */
+
+.success-feedback {
+  background: #edf9f1;
+  border: 2px solid #bfe4c9;
+  border-radius: 18px;
+  padding: 20px;
+  margin-top: 18px;
+}
+
+.repeat-feedback {
+  background: #fff4e7;
+  border: 2px solid #f0c99c;
+  border-radius: 18px;
+  padding: 20px;
+  margin-top: 18px;
+}
+
+.success-feedback h3,
+.repeat-feedback h3 {
+  margin-top: 0;
+}
+
+.student-response {
+  background: white;
+  border-radius: 10px;
+  padding: 11px 13px;
+}
+
+.model-answer {
+  background: white;
+  border-left: 4px solid #087f8c;
+  border-radius: 8px;
+  padding: 11px 13px;
+}
+
+.ai-follow-up {
+  background: #eaf8fa;
+  border-radius: 10px;
+  padding: 10px 13px;
+  margin: 12px 0;
+}
+
+
+/* =========================================
+   RESULT
+========================================= */
+
+.result-score {
+  font-size: 24px !important;
+}
+
+.result-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.result-buttons button {
+  flex: 1;
+  background: #087f8c;
+  color: white;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+  .role-choice-container {
+    flex-direction: column;
+  }
+
+  .role-status {
+    gap: 7px;
+  }
+
+  .role-status-box {
+    padding: 12px 8px;
+  }
+
+  .role-status-box span {
+    font-size: 30px;
+  }
+
+  .ai-message p {
+    font-size: 18px;
+  }
+
+  .result-buttons {
+    flex-direction: column;
+  }
+
+  #studentAnswer {
+    font-size: 16px;
+  }
+
+}
