@@ -1729,7 +1729,17 @@ function showSuccessFeedback(
       ? "🌟 Excellent!"
       : "👍 Good!";
 
+  if (level === "excellent") {
 
+    playExcellentFeedback();
+
+  }
+
+  else {
+
+    playGoodFeedback();
+
+  }
   const extra =
     level === "good"
 
@@ -1851,7 +1861,7 @@ function showSuccessFeedback(
 
 function showRepeatFeedback(
   message
-) {
+) {  playRepeatFeedback();
 
   document
     .getElementById(
@@ -2259,38 +2269,260 @@ function normalizeText(text) {
 // TEXT TO SPEECH
 // ======================================================
 
+
+// ======================================================
+// AUDIO SYSTEM
+// ======================================================
+
+// Đọc tiếng Anh bằng giọng của trình duyệt.
+// Nút Listen có thể gọi hàm này bao nhiêu lần cũng được.
+
 function speakText(text) {
 
-  if (
-    "speechSynthesis" in window
-  ) {
+  if (!("speechSynthesis" in window)) {
+    return;
+  }
 
-    window
-      .speechSynthesis
-      .cancel();
+  window.speechSynthesis.cancel();
+
+  const speech =
+    new SpeechSynthesisUtterance(text);
+
+  speech.lang = "en-US";
+
+  speech.rate = 0.82;
+
+  speech.pitch = 1;
+
+  speech.volume = 1;
+
+  window.speechSynthesis.speak(speech);
+
+}
 
 
-    const speech =
-      new SpeechSynthesisUtterance(
-        text
-      );
+// ======================================================
+// CREATE SIMPLE SOUND
+// Không cần MP3
+// Không cần API
+// Không mất phí
+// ======================================================
+
+function playTone(
+  frequency,
+  duration,
+  delay = 0
+) {
+
+  try {
+
+    const AudioContext =
+      window.AudioContext ||
+      window.webkitAudioContext;
 
 
-    speech.lang =
-      "en-US";
+    if (!AudioContext) {
+      return;
+    }
 
 
-    speech.rate =
-      0.85;
+    if (!window.roleplayAudioContext) {
+
+      window.roleplayAudioContext =
+        new AudioContext();
+
+    }
 
 
-    window
-      .speechSynthesis
-      .speak(
-        speech
-      );
+    const context =
+      window.roleplayAudioContext;
+
+
+    if (context.state === "suspended") {
+
+      context.resume();
+
+    }
+
+
+    const oscillator =
+      context.createOscillator();
+
+
+    const gain =
+      context.createGain();
+
+
+    oscillator.connect(gain);
+
+    gain.connect(
+      context.destination
+    );
+
+
+    oscillator.type = "sine";
+
+    oscillator.frequency.value =
+      frequency;
+
+
+    const startTime =
+      context.currentTime +
+      delay;
+
+
+    const endTime =
+      startTime +
+      duration;
+
+
+    gain.gain.setValueAtTime(
+      0.0001,
+      startTime
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.12,
+      startTime + 0.02
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      endTime
+    );
+
+
+    oscillator.start(
+      startTime
+    );
+
+
+    oscillator.stop(
+      endTime + 0.03
+    );
 
   }
+
+  catch (error) {
+
+    console.log(
+      "Audio is not available."
+    );
+
+  }
+
+}
+
+
+// ======================================================
+// EXCELLENT SOUND
+// ======================================================
+
+function playExcellentFeedback() {
+
+  // 3 tones going upward
+
+  playTone(
+    523,
+    0.13,
+    0
+  );
+
+  playTone(
+    659,
+    0.13,
+    0.14
+  );
+
+  playTone(
+    784,
+    0.20,
+    0.28
+  );
+
+
+  setTimeout(
+    function () {
+
+      speakText(
+        "Excellent!"
+      );
+
+    },
+    600
+  );
+
+}
+
+
+// ======================================================
+// GOOD SOUND
+// ======================================================
+
+function playGoodFeedback() {
+
+  // 2 gentle success tones
+
+  playTone(
+    523,
+    0.14,
+    0
+  );
+
+  playTone(
+    659,
+    0.18,
+    0.15
+  );
+
+
+  setTimeout(
+    function () {
+
+      speakText(
+        "Good!"
+      );
+
+    },
+    450
+  );
+
+}
+
+
+// ======================================================
+// REPEAT SOUND
+// ======================================================
+
+function playRepeatFeedback() {
+
+  // Different descending sound
+
+  playTone(
+    440,
+    0.15,
+    0
+  );
+
+  playTone(
+    330,
+    0.20,
+    0.17
+  );
+
+
+  setTimeout(
+    function () {
+
+      speakText(
+        "Repeat, please."
+      );
+
+    },
+    450
+  );
 
 }
 
