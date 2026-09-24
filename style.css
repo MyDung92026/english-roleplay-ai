@@ -508,3 +508,223 @@ footer {
   }
 
 }
+/* =========================================
+   BOOK A TOUR - ACTIVITY CARDS
+========================================= */
+
+.activity-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: #f5fafc;
+  border: 2px solid #dcebef;
+  border-radius: 18px;
+  padding: 18px;
+  margin: 16px 0;
+}
+
+.activity-icon {
+  font-size: 42px;
+  width: 55px;
+  text-align: center;
+}
+
+.activity-info {
+  flex: 1;
+}
+
+.activity-info h3 {
+  margin: 0 0 6px;
+}
+
+.activity-info p {
+  margin: 5px 0 12px;
+  color: #526d7e;
+}
+
+.activity-info button {
+  background: #087f8c;
+  color: white;
+}
+
+
+/* =========================================
+   TOUR LIST
+========================================= */
+
+.tour-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+
+/* =========================================
+   TOUR CARD
+========================================= */
+
+.tour-card {
+  display: flex;
+  gap: 16px;
+  background: #f8fcfd;
+  border: 2px solid #dcebef;
+  border-radius: 18px;
+  padding: 18px;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.tour-card:hover {
+  transform: translateY(-2px);
+  border-color: #80cbd3;
+  box-shadow:
+    0 8px 20px
+    rgba(20, 90, 110, 0.10);
+}
+
+
+/* =========================================
+   TOUR NUMBER
+========================================= */
+
+.tour-number {
+  min-width: 42px;
+  height: 42px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #087f8c;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+
+/* =========================================
+   TOUR INFORMATION
+========================================= */
+
+.tour-info {
+  flex: 1;
+}
+
+.tour-info h3 {
+  margin: 2px 0 10px;
+  color: #16385d;
+}
+
+.tour-info p {
+  margin: 7px 0;
+  font-size: 16px;
+}
+
+.tour-info button {
+  margin-top: 10px;
+  background: #087f8c;
+  color: white;
+}
+
+
+/* =========================================
+   ROLE PREVIEW
+========================================= */
+
+.role-preview {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.role-preview div {
+  flex: 1;
+  background: #f1f9fb;
+  border: 2px solid #d9edf1;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+}
+
+.role-preview span {
+  display: block;
+  font-size: 42px;
+  margin-bottom: 8px;
+}
+
+.role-preview strong {
+  font-size: 17px;
+}
+
+
+/* =========================================
+   CONTINUE BUTTON
+========================================= */
+
+.continue-button {
+  width: 100%;
+  background: #087f8c !important;
+  color: white !important;
+  margin-top: 8px;
+}
+
+
+/* =========================================
+   BACK AREA
+========================================= */
+
+.back-area {
+  border-top: 1px solid #e1eaee;
+  margin-top: 25px;
+  padding-top: 18px;
+}
+
+.back-button {
+  background: #eef3f6 !important;
+  color: #405d6e !important;
+  border: 1px solid #d4e0e6 !important;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+  .activity-card {
+    align-items: flex-start;
+    padding: 15px;
+  }
+
+  .activity-icon {
+    font-size: 34px;
+    width: 42px;
+  }
+
+  .tour-card {
+    padding: 15px;
+    gap: 12px;
+  }
+
+  .tour-number {
+    min-width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .tour-info h3 {
+    font-size: 18px;
+  }
+
+  .tour-info p {
+    font-size: 15px;
+  }
+
+  .role-preview {
+    flex-direction: column;
+  }
+
+}
