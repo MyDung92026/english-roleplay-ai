@@ -1,20 +1,19 @@
 // ======================================================
 // ENGLISH ROLEPLAY AI
-// BOOK A TOUR - A1
+// BOOK A TOUR - WRITE A1
+// COMPLETE VERSION
 // ======================================================
 
 
 // ======================================================
-// START
+// START BUTTON
 // ======================================================
 
-const startButton =
-  document.getElementById("startButton");
+const startButton = document.getElementById("startButton");
 
-startButton.addEventListener(
-  "click",
-  openBookTour
-);
+if (startButton) {
+  startButton.addEventListener("click", openBookTour);
+}
 
 
 // ======================================================
@@ -115,26 +114,22 @@ const tours = [
 // ======================================================
 
 let currentTour = null;
-
-let currentActivity = null;
-
+let currentActivity = "write";
 let currentStudentRole = null;
 
 let conversationStep = 0;
-
 let conversationScore = 0;
 
-let ideaVisible = false;
-
 let currentListenText = "";
+
+
 // ======================================================
-// BOOK A TOUR HOME
+// HOME - BOOK A TOUR
 // ======================================================
 
 function openBookTour() {
 
   resetConversation();
-
 
   document.querySelector("main").innerHTML = `
 
@@ -150,19 +145,16 @@ function openBookTour() {
 
       <p>
         Practice English through
-        a real-life travel conversation.
+        real-life travel conversations.
       </p>
-
 
       <div class="mission">
 
-        <h3>
-          🎯 Your Mission
-        </h3>
+        <h3>🎯 Your Mission</h3>
 
         <p>
-          Choose a tour, choose your role,
-          and practice English with AI.
+          Choose a learning activity,
+          choose a tour and choose your role.
         </p>
 
       </div>
@@ -181,9 +173,7 @@ function openBookTour() {
 
         <div class="activity-info">
 
-          <h3>
-            CHOOSE
-          </h3>
+          <h3>CHOOSE</h3>
 
           <p>
             Choose the best answer
@@ -191,7 +181,7 @@ function openBookTour() {
           </p>
 
           <button
-            onclick="chooseActivity('choose')">
+            onclick="showChooseComingSoon()">
 
             Start Choose
 
@@ -210,9 +200,7 @@ function openBookTour() {
 
         <div class="activity-info">
 
-          <h3>
-            WRITE
-          </h3>
+          <h3>WRITE</h3>
 
           <p>
             Write your own answers
@@ -220,7 +208,7 @@ function openBookTour() {
           </p>
 
           <button
-            onclick="chooseActivity('write')">
+            onclick="showTourList('write')">
 
             Start Write
 
@@ -239,9 +227,7 @@ function openBookTour() {
 
         <div class="activity-info">
 
-          <h3>
-            SPEAK
-          </h3>
+          <h3>SPEAK</h3>
 
           <p>
             Speak your answers
@@ -262,34 +248,6 @@ function openBookTour() {
     </section>
 
   `;
-
-}
-
-
-// ======================================================
-// CHOOSE ACTIVITY
-// ======================================================
-
-function chooseActivity(activity) {
-
-  currentActivity = activity;
-
-
-  if (activity === "choose") {
-
-    showChooseComingSoon();
-
-    return;
-
-  }
-
-
-  if (activity === "write") {
-
-    showTourList(activity);
-
-  }
-
 }
 
 
@@ -297,73 +255,52 @@ function chooseActivity(activity) {
 // TOUR LIST
 // ======================================================
 
-function showTourList(activity) {
+function showTourList(activity = "write") {
 
   currentActivity = activity;
-
 
   let tourCards = "";
 
 
-  tours.forEach(tour => {
+  tours.forEach(function (tour) {
 
     tourCards += `
 
       <div class="tour-card">
 
-
         <div class="tour-number">
-
           ${tour.id}
-
         </div>
 
 
         <div class="tour-info">
 
-
           <h3>
-
-            ${tour.country}
-            — ${tour.destination}
-
+            ${tour.country} — ${tour.destination}
           </h3>
-
 
           <p>
             🎯 ${capitalizeFirst(tour.activity)}
           </p>
 
-
           <p>
-
             🏨 ${capitalizeFirst(tour.accommodation)}
             • ${capitalizeFirst(tour.room)}
-
           </p>
-
 
           <p>
-
             💵 ${tour.price}/night
             • 📅 ${tour.stay}
-
           </p>
 
-
           <button
-            onclick="selectTour(
-              ${tour.id},
-              '${activity}'
-            )">
+            onclick="selectTour(${tour.id}, '${activity}')">
 
             Select this tour
 
           </button>
 
-
         </div>
-
 
       </div>
 
@@ -376,29 +313,21 @@ function showTourList(activity) {
 
     <section class="lesson-card">
 
-
       <div class="level">
         ✍️ WRITE
       </div>
-
 
       <h2>
         🌏 Choose a Tour
       </h2>
 
-
       <p>
-        Choose one destination
-        to practice.
+        Choose one destination to practice.
       </p>
 
-
       <div class="tour-list">
-
         ${tourCards}
-
       </div>
-
 
       <div class="back-area">
 
@@ -412,11 +341,9 @@ function showTourList(activity) {
 
       </div>
 
-
     </section>
 
   `;
-
 }
 
 
@@ -424,16 +351,11 @@ function showTourList(activity) {
 // SELECT TOUR
 // ======================================================
 
-function selectTour(
-  tourId,
-  activity
-) {
+function selectTour(tourId, activity) {
 
-  const tour =
-    tours.find(
-      item =>
-        item.id === tourId
-    );
+  const tour = tours.find(function (item) {
+    return item.id === tourId;
+  });
 
 
   if (!tour) {
@@ -442,41 +364,34 @@ function selectTour(
 
 
   currentTour = tour;
-
   currentActivity = activity;
 
-
-  showSelectedTour(
-    tour,
-    activity
-  );
-
+  showSelectedTour();
 }
 
 
 // ======================================================
-// TOUR INFORMATION
+// SHOW TOUR INFORMATION
 // ======================================================
 
-function showSelectedTour(
-  tour,
-  activity
-) {
+function showSelectedTour() {
 
-  currentTour = tour;
+  const tour = currentTour;
 
-  currentActivity = activity;
+
+  if (!tour) {
+    openBookTour();
+    return;
+  }
 
 
   document.querySelector("main").innerHTML = `
 
     <section class="lesson-card">
 
-
       <div class="level">
         ✍️ WRITE
       </div>
-
 
       <h2>
         ✈️ ${tour.destination}
@@ -489,42 +404,35 @@ function showSelectedTour(
           🌍 Tour Information
         </h3>
 
-
         <p>
           <strong>Country:</strong>
           ${tour.country}
         </p>
-
 
         <p>
           <strong>Destination:</strong>
           ${tour.destination}
         </p>
 
-
         <p>
           <strong>Activity:</strong>
           ${capitalizeFirst(tour.activity)}
         </p>
-
 
         <p>
           <strong>Accommodation:</strong>
           ${capitalizeFirst(tour.accommodation)}
         </p>
 
-
         <p>
           <strong>Room:</strong>
           ${capitalizeFirst(tour.room)}
         </p>
 
-
         <p>
           <strong>Price:</strong>
           ${tour.price}/night
         </p>
-
 
         <p>
           <strong>Stay:</strong>
@@ -538,47 +446,29 @@ function showSelectedTour(
         🎭 Next Step
       </h3>
 
-
       <p>
-        Choose the role
-        you want to practice.
+        Choose the role you want to practice.
       </p>
 
 
       <div class="role-preview">
 
-
         <div>
-
           <span>🧳</span>
-
-          <strong>
-            Tourist
-          </strong>
-
+          <strong>Tourist</strong>
         </div>
-
 
         <div>
-
           <span>👩‍💼</span>
-
-          <strong>
-            Travel Agent
-          </strong>
-
+          <strong>Travel Agent</strong>
         </div>
-
 
       </div>
 
 
       <button
         class="continue-button"
-        onclick="showRoleSelection(
-          ${tour.id},
-          '${activity}'
-        )">
+        onclick="showRoleSelection()">
 
         Continue ➜
 
@@ -589,9 +479,7 @@ function showSelectedTour(
 
         <button
           class="back-button"
-          onclick="showTourList(
-            '${activity}'
-          )">
+          onclick="showTourList('write')">
 
           ← Choose another tour
 
@@ -599,11 +487,9 @@ function showSelectedTour(
 
       </div>
 
-
     </section>
 
   `;
-
 }
 
 
@@ -611,42 +497,28 @@ function showSelectedTour(
 // ROLE SELECTION
 // ======================================================
 
-function showRoleSelection(
-  tourId,
-  activity
-) {
+function showRoleSelection() {
 
-  const tour =
-    tours.find(
-      item =>
-        item.id === tourId
-    );
+  const tour = currentTour;
 
 
   if (!tour) {
+    openBookTour();
     return;
   }
-
-
-  currentTour = tour;
-
-  currentActivity = activity;
 
 
   document.querySelector("main").innerHTML = `
 
     <section class="lesson-card">
 
-
       <div class="level">
         🎭 CHOOSE YOUR ROLE
       </div>
 
-
       <h2>
         ✈️ ${tour.destination}
       </h2>
-
 
       <p>
         Who do you want to be?
@@ -676,11 +548,7 @@ function showRoleSelection(
           </p>
 
           <button
-            onclick="selectRole(
-              ${tour.id},
-              '${activity}',
-              'tourist'
-            )">
+            onclick="selectRole('tourist')">
 
             I am the Tourist
 
@@ -700,8 +568,7 @@ function showRoleSelection(
           </h3>
 
           <p>
-            You help a tourist
-            book a tour.
+            You help a tourist book a tour.
           </p>
 
           <p>
@@ -710,18 +577,13 @@ function showRoleSelection(
           </p>
 
           <button
-            onclick="selectRole(
-              ${tour.id},
-              '${activity}',
-              'agent'
-            )">
+            onclick="selectRole('agent')">
 
             I am the Travel Agent
 
           </button>
 
         </div>
-
 
       </div>
 
@@ -730,10 +592,7 @@ function showRoleSelection(
 
         <button
           class="back-button"
-          onclick="showSelectedTour(
-            currentTour,
-            currentActivity
-          )">
+          onclick="showSelectedTour()">
 
           ← Back to Tour
 
@@ -741,11 +600,9 @@ function showRoleSelection(
 
       </div>
 
-
     </section>
 
   `;
-
 }
 
 
@@ -753,34 +610,11 @@ function showRoleSelection(
 // SELECT ROLE
 // ======================================================
 
-function selectRole(
-  tourId,
-  activity,
-  studentRole
-) {
+function selectRole(studentRole) {
 
-  const tour =
-    tours.find(
-      item =>
-        item.id === tourId
-    );
-
-
-  if (!tour) {
-    return;
-  }
-
-
-  currentTour = tour;
-
-  currentActivity = activity;
-
-  currentStudentRole =
-    studentRole;
-
+  currentStudentRole = studentRole;
 
   conversationStep = 0;
-
   conversationScore = 0;
 
 
@@ -812,14 +646,12 @@ function selectRole(
 
     <section class="lesson-card">
 
-
       <div class="level">
         ✍️ WRITE
       </div>
 
-
       <h2>
-        ✈️ ${tour.destination}
+        ✈️ ${currentTour.destination}
       </h2>
 
 
@@ -829,7 +661,6 @@ function selectRole(
 
 
       <div class="role-status">
-
 
         <div class="role-status-box">
 
@@ -869,7 +700,6 @@ function selectRole(
 
         </div>
 
-
       </div>
 
 
@@ -881,12 +711,17 @@ function selectRole(
 
         <p>
           <strong>Destination:</strong>
-          ${tour.destination}
+          ${currentTour.destination}
         </p>
 
         <p>
-          Write simple English.
-          AI will respond to you.
+          You are the
+          <strong>${studentRoleName}</strong>.
+        </p>
+
+        <p>
+          AI is the
+          <strong>${aiRoleName}</strong>.
         </p>
 
       </div>
@@ -905,10 +740,7 @@ function selectRole(
 
         <button
           class="back-button"
-          onclick="showRoleSelection(
-            ${tour.id},
-            '${activity}'
-          )">
+          onclick="showRoleSelection()">
 
           ← Change Role
 
@@ -916,17 +748,15 @@ function selectRole(
 
       </div>
 
-
     </section>
 
   `;
-
 }
 
 
 // ======================================================
-// BUILD TOURIST TASKS
-// Student = Tourist
+// TOURIST TASKS
+// STUDENT = TOURIST
 // ======================================================
 
 function getTouristTasks() {
@@ -941,7 +771,7 @@ function getTouristTasks() {
         "Hello! Where would you like to go?",
 
       keywords: [
-        normalizeText(t.destination)
+        t.destination
       ],
 
       strongKeywords: [
@@ -962,14 +792,18 @@ function getTouristTasks() {
 
     {
       ai:
-        "What would you like to do there?",
+        "Sure. What would you like to do there?",
 
       keywords: [
-        normalizeText(t.activityKeyword)
+        t.activityKeyword,
+        t.activity
       ],
 
       strongKeywords: [
-        "like"
+        "like",
+        "visit",
+        "go",
+        "try"
       ],
 
       model:
@@ -988,11 +822,12 @@ function getTouristTasks() {
         "Where would you like to stay?",
 
       keywords: [
-        normalizeText(t.accommodation)
+        t.accommodation
       ],
 
       strongKeywords: [
-        "stay"
+        "stay",
+        "like"
       ],
 
       model:
@@ -1011,11 +846,12 @@ function getTouristTasks() {
         "What kind of room would you like?",
 
       keywords: [
-        normalizeText(t.room)
+        t.room
       ],
 
       strongKeywords: [
-        "room"
+        "room",
+        "like"
       ],
 
       model:
@@ -1034,24 +870,15 @@ function getTouristTasks() {
         "How long are you staying?",
 
       keywords: [
-        normalizeText(t.stay),
-        normalizeText(
-          t.stay.replace(
-            "days",
-            ""
-          )
-        ),
-        normalizeText(
-          t.stay.replace(
-            "nights",
-            ""
-          )
-        )
+        t.stay,
+        t.stay.split(" ")[0]
       ],
 
       strongKeywords: [
+        "stay",
         "staying",
-        "stay"
+        "days",
+        "nights"
       ],
 
       model:
@@ -1075,27 +902,27 @@ function getTouristTasks() {
       ],
 
       strongKeywords: [
-        "thank"
+        "thank",
+        "thanks"
       ],
 
       model:
         "Thank you.",
 
       ideas: [
-        "Thanks",
-        "Thank you",
+        "Thanks.",
+        "Thank you.",
         "Thank you very much."
       ]
     }
 
   ];
-
 }
 
 
 // ======================================================
-// BUILD TRAVEL AGENT TASKS
-// Student = Travel Agent
+// TRAVEL AGENT TASKS
+// STUDENT = TRAVEL AGENT
 // ======================================================
 
 function getAgentTasks() {
@@ -1125,7 +952,7 @@ function getAgentTasks() {
 
       ideas: [
         "activity",
-        "like to do",
+        "What would you like to do?",
         "Sure. What would you like to do there?"
       ],
 
@@ -1141,7 +968,7 @@ function getAgentTasks() {
       keywords: [
         "where would you like to stay",
         "where do you want to stay",
-        "where would you stay"
+        "where will you stay"
       ],
 
       strongKeywords: [
@@ -1154,7 +981,7 @@ function getAgentTasks() {
 
       ideas: [
         "accommodation",
-        "where + stay",
+        "Where + stay?",
         "Where would you like to stay?"
       ],
 
@@ -1169,8 +996,8 @@ function getAgentTasks() {
 
       keywords: [
         "what kind of room",
-        "which room",
-        "what room"
+        "what room",
+        "which room"
       ],
 
       strongKeywords: [
@@ -1212,7 +1039,7 @@ function getAgentTasks() {
 
       ideas: [
         "length of stay",
-        "how long",
+        "How long?",
         "How long are you staying?"
       ],
 
@@ -1226,7 +1053,7 @@ function getAgentTasks() {
         `I'm staying for ${t.stay}.`,
 
       keywords: [
-        normalizeText(t.price),
+        t.price,
         "a night",
         "per night"
       ],
@@ -1246,13 +1073,13 @@ function getAgentTasks() {
       ],
 
       aiAfter:
-        "That sounds good."
+        "Okay. That sounds good."
     },
 
 
     {
       ai:
-        "That sounds good.",
+        "Okay. That sounds good.",
 
       keywords: [
         "i can book it for you",
@@ -1278,7 +1105,6 @@ function getAgentTasks() {
     }
 
   ];
-
 }
 
 
@@ -1288,52 +1114,47 @@ function getAgentTasks() {
 
 function getCurrentTasks() {
 
-  if (
-    currentStudentRole ===
-    "tourist"
-  ) {
-
+  if (currentStudentRole === "tourist") {
     return getTouristTasks();
-
   }
 
-
   return getAgentTasks();
-
 }
 
 
 // ======================================================
-// START WRITE CONVERSATION
+// START WRITE
 // ======================================================
 
 function startWriteConversation() {
 
   conversationStep = 0;
-
   conversationScore = 0;
 
-  ideaVisible = false;
-
-
   showWriteStep();
-
 }
 
 
 // ======================================================
-// SHOW WRITE STEP
+// SHOW CURRENT WRITE STEP
 // ======================================================
 
 function showWriteStep() {
 
-  const tasks =
-    getCurrentTasks();
+  const tasks = getCurrentTasks();
+
+  const task = tasks[conversationStep];
 
 
-  const task =
-    tasks[conversationStep];
-currentListenText = task.ai;
+  if (!task) {
+    showWriteResult();
+    return;
+  }
+
+
+  // This is the sentence Listen will replay.
+  currentListenText = task.ai;
+
 
   const aiRole =
     currentStudentRole === "tourist"
@@ -1347,9 +1168,14 @@ currentListenText = task.ai;
       : "🧳";
 
 
+  const studentRole =
+    currentStudentRole === "tourist"
+      ? "🧳 Tourist"
+      : "👩‍💼 Travel Agent";
+
+
   const progress =
-    ((conversationStep + 1) /
-      tasks.length) * 100;
+    ((conversationStep + 1) / tasks.length) * 100;
 
 
   document.querySelector("main").innerHTML = `
@@ -1383,27 +1209,13 @@ currentListenText = task.ai;
 
       <div class="conversation-role-line">
 
-        <strong>
-          YOU:
-        </strong>
+        <strong>YOU:</strong>
+        ${studentRole}
 
-        ${
-          currentStudentRole ===
-          "tourist"
-            ? "🧳 Tourist"
-            : "👩‍💼 Travel Agent"
-        }
+        <span>•</span>
 
-        <span>
-          •
-        </span>
-
-        <strong>
-          AI:
-        </strong>
-
-        ${aiIcon}
-        ${aiRole}
+        <strong>AI:</strong>
+        ${aiIcon} ${aiRole}
 
       </div>
 
@@ -1413,6 +1225,7 @@ currentListenText = task.ai;
         <div class="speaker-label">
 
           ${aiIcon}
+
           <strong>
             AI ${aiRole}
           </strong>
@@ -1425,14 +1238,14 @@ currentListenText = task.ai;
         </p>
 
 
-       <button
-  type="button"
-  class="listen-button"
-  onclick="listenAgain()">
+        <button
+          type="button"
+          class="listen-button"
+          id="listenButton">
 
-  🔊 Listen
+          🔊 Listen
 
-</button>
+        </button>
 
       </div>
 
@@ -1453,8 +1266,9 @@ currentListenText = task.ai;
 
 
         <button
+          type="button"
           class="check-button"
-          onclick="checkWriteAnswer()">
+          id="sendAnswerButton">
 
           ✓ Send Answer
 
@@ -1462,8 +1276,9 @@ currentListenText = task.ai;
 
 
         <button
+          type="button"
           class="idea-button"
-          onclick="showIdeas()">
+          id="ideaButton">
 
           💡 Idea
 
@@ -1472,10 +1287,7 @@ currentListenText = task.ai;
       </div>
 
 
-      <div
-        id="ideaArea">
-      </div>
-
+      <div id="ideaArea"></div>
 
       <div
         id="feedback"
@@ -1487,10 +1299,7 @@ currentListenText = task.ai;
 
         <button
           class="back-button"
-          onclick="showRoleSelection(
-            ${currentTour.id},
-            '${currentActivity}'
-          )">
+          onclick="showRoleSelection()">
 
           ← Change Role
 
@@ -1498,54 +1307,87 @@ currentListenText = task.ai;
 
       </div>
 
-
     </section>
 
   `;
 
 
+  // IMPORTANT:
+  // We use addEventListener instead of putting the
+  // sentence directly inside onclick.
+  // This makes Listen much more reliable.
+
+  const listenButton =
+    document.getElementById("listenButton");
+
+  listenButton.addEventListener(
+    "click",
+    function () {
+
+      listenAgain();
+
+    }
+  );
+
+
+  const sendButton =
+    document.getElementById("sendAnswerButton");
+
+  sendButton.addEventListener(
+    "click",
+    function () {
+
+      checkWriteAnswer();
+
+    }
+  );
+
+
+  const ideaButton =
+    document.getElementById("ideaButton");
+
+  ideaButton.addEventListener(
+    "click",
+    function () {
+
+      showIdeas();
+
+    }
+  );
+
+
   const input =
-    document.getElementById(
-      "studentAnswer"
-    );
-
-
-  input.focus();
+    document.getElementById("studentAnswer");
 
 
   input.addEventListener(
     "keydown",
-    function(event) {
+    function (event) {
 
-      if (
-        event.key === "Enter"
-      ) {
-
+      if (event.key === "Enter") {
         checkWriteAnswer();
-
       }
 
     }
   );
 
 
-  speakText(
-    task.ai
-  );
+  input.focus();
 
+
+  // AI automatically reads the new sentence once.
+  speakText(currentListenText);
 }
 
 
 // ======================================================
-// CHECK WRITE ANSWER
+// CHECK ANSWER
 // ======================================================
 
 function checkWriteAnswer() {
 
   const input =
-    document.getElementById(
-      "studentAnswer"
-    );
+    document.getElementById("studentAnswer");
 
 
   if (!input) {
@@ -1566,16 +1408,12 @@ function checkWriteAnswer() {
     input.focus();
 
     return;
-
   }
 
 
-  const tasks =
-    getCurrentTasks();
+  const tasks = getCurrentTasks();
 
-
-  const task =
-    tasks[conversationStep];
+  const task = tasks[conversationStep];
 
 
   const result =
@@ -1585,12 +1423,9 @@ function checkWriteAnswer() {
     );
 
 
-  if (
-    result === "excellent"
-  ) {
+  if (result === "excellent") {
 
     conversationScore++;
-
 
     showSuccessFeedback(
       "excellent",
@@ -1600,12 +1435,9 @@ function checkWriteAnswer() {
 
   }
 
-  else if (
-    result === "good"
-  ) {
+  else if (result === "good") {
 
     conversationScore++;
-
 
     showSuccessFeedback(
       "good",
@@ -1622,99 +1454,72 @@ function checkWriteAnswer() {
     );
 
   }
-
 }
 
 
 // ======================================================
-// SIMPLE A1 ANSWER EVALUATION
+// EVALUATE A1 ANSWER
 // ======================================================
 
-function evaluateAnswer(
-  studentText,
-  task
-) {
+function evaluateAnswer(studentText, task) {
 
   const text =
-    normalizeText(
-      studentText
-    );
+    normalizeText(studentText);
 
 
   const model =
-    normalizeText(
-      task.model
-    );
+    normalizeText(task.model);
 
 
-  // Exact or almost exact model answer
-
-  if (
-    text === model
-  ) {
-
+  if (text === model) {
     return "excellent";
-
   }
 
 
-  // Check accepted meaning
-
   const meaningMatch =
-    task.keywords.some(
-      keyword => {
+    task.keywords.some(function (keyword) {
 
-        const k =
-          normalizeText(keyword);
+      const normalizedKeyword =
+        normalizeText(keyword);
 
-        return (
-          k.length > 0 &&
-          text.includes(k)
-        );
+      return (
+        normalizedKeyword &&
+        text.includes(normalizedKeyword)
+      );
 
-      }
-    );
+    });
 
 
   if (!meaningMatch) {
-
     return "repeat";
-
   }
 
 
-  // Longer and more complete answer
-
   const strongMatch =
-    task.strongKeywords.some(
-      keyword =>
-        text.includes(
-          normalizeText(keyword)
-        )
-    );
+    task.strongKeywords.some(function (keyword) {
+
+      return text.includes(
+        normalizeText(keyword)
+      );
+
+    });
 
 
   const wordCount =
-    text.split(" ").length;
+    text.split(" ").filter(Boolean).length;
 
 
-  if (
-    strongMatch &&
-    wordCount >= 4
-  ) {
-
+  if (strongMatch && wordCount >= 4) {
     return "excellent";
-
   }
 
 
   return "good";
-
 }
 
 
 // ======================================================
-// SUCCESS FEEDBACK
+// GOOD / EXCELLENT
 // ======================================================
 
 function showSuccessFeedback(
@@ -1728,55 +1533,59 @@ function showSuccessFeedback(
       ? "🌟 Excellent!"
       : "👍 Good!";
 
+
   if (level === "excellent") {
-
     playExcellentFeedback();
-
+  }
+  else {
+    playGoodFeedback();
   }
 
+
+  let modelSection = "";
+
+
+  if (level === "good") {
+
+    modelSection = `
+
+      <p>
+        A better sentence:
+      </p>
+
+      <p class="model-answer">
+        <strong>
+          ${task.model}
+        </strong>
+      </p>
+
+    `;
+
+  }
   else {
 
-    playGoodFeedback();
+    modelSection = `
+
+      <p class="model-answer">
+        <strong>
+          ${task.model}
+        </strong>
+      </p>
+
+    `;
 
   }
-  const extra =
-    level === "good"
-
-      ? `
-
-        <p>
-          A better sentence:
-        </p>
-
-        <p class="model-answer">
-          <strong>
-            ${task.model}
-          </strong>
-        </p>
-
-      `
-
-      : `
-
-        <p class="model-answer">
-          <strong>
-            ${task.model}
-          </strong>
-        </p>
-
-      `;
 
 
-  let aiReply = "";
+  let aiFollowUp = "";
 
 
   if (
-    currentStudentRole ===
-    "agent" &&
+    currentStudentRole === "agent" &&
     task.aiAfter
   ) {
 
-    aiReply = `
+    aiFollowUp = `
 
       <div class="ai-follow-up">
 
@@ -1792,182 +1601,155 @@ function showSuccessFeedback(
   }
 
 
-  document
-    .getElementById(
-      "feedback"
-    )
-    .innerHTML = `
+  document.getElementById("feedback").innerHTML = `
 
-      <div class="success-feedback">
+    <div class="success-feedback">
 
-        <h3>
-          ${title}
-        </h3>
+      <h3>
+        ${title}
+      </h3>
 
 
-        <p class="student-response">
+      <p class="student-response">
 
-          <strong>You:</strong>
-          ${escapeHTML(studentText)}
+        <strong>You:</strong>
+        ${escapeHTML(studentText)}
 
-        </p>
-
-
-        ${extra}
+      </p>
 
 
-        ${aiReply}
+      ${modelSection}
+
+      ${aiFollowUp}
 
 
-        <button
-          class="continue-button"
-          onclick="nextWriteStep()">
+      <button
+        class="continue-button"
+        onclick="nextWriteStep()">
 
-          ${
-            conversationStep <
-            getCurrentTasks().length - 1
+        ${
+          conversationStep <
+          getCurrentTasks().length - 1
 
-              ? "Continue ➜"
+            ? "Continue ➜"
 
-              : "Finish 🎉"
-          }
+            : "Finish 🎉"
+        }
 
-        </button>
+      </button>
 
-      </div>
+    </div>
 
-    `;
+  `;
+}
 
 
-  if (
-    currentStudentRole ===
-    "agent" &&
-    task.aiAfter
-  ) {
+// ======================================================
+// REPEAT
+// ======================================================
 
-    speakText(
-      task.aiAfter
-    );
+function showRepeatFeedback(message) {
 
+  playRepeatFeedback();
+
+
+  const feedback =
+    document.getElementById("feedback");
+
+
+  if (!feedback) {
+    return;
   }
 
+
+  feedback.innerHTML = `
+
+    <div class="repeat-feedback">
+
+      <h3>
+        🔄 Repeat, please.
+      </h3>
+
+      <p>
+        ${message}
+      </p>
+
+    </div>
+
+  `;
 }
 
 
 // ======================================================
-// REPEAT FEEDBACK
-// ======================================================
-
-function showRepeatFeedback(
-  message
-) {  playRepeatFeedback();
-
-  document
-    .getElementById(
-      "feedback"
-    )
-    .innerHTML = `
-
-      <div class="repeat-feedback">
-
-        <h3>
-          🔄 Repeat, please.
-        </h3>
-
-        <p>
-          ${message}
-        </p>
-
-      </div>
-
-    `;
-
-}
-
-
-// ======================================================
-// IDEA
+// IDEA - THREE LEVELS
 // ======================================================
 
 function showIdeas() {
 
-  const tasks =
-    getCurrentTasks();
+  const tasks = getCurrentTasks();
+
+  const task = tasks[conversationStep];
 
 
-  const task =
-    tasks[conversationStep];
+  const ideaArea =
+    document.getElementById("ideaArea");
 
 
-  ideaVisible = true;
+  if (!ideaArea) {
+    return;
+  }
 
 
-  document
-    .getElementById(
-      "ideaArea"
-    )
-    .innerHTML = `
+  ideaArea.innerHTML = `
 
-      <div class="idea-panel">
+    <div class="idea-panel">
 
-        <h3>
-          💡 Ideas
-        </h3>
+      <h3>
+        💡 Ideas
+      </h3>
 
-
-        <p>
-          Try one of these ideas,
-          or write your own answer.
-        </p>
+      <p>
+        Try one of these ideas,
+        or write your own answer.
+      </p>
 
 
-        <div class="idea-item">
+      <div class="idea-item">
 
-          <strong>
-            Idea 1:
-          </strong>
-
-          ${task.ideas[0]}
-
-        </div>
-
-
-        <div class="idea-item">
-
-          <strong>
-            Idea 2:
-          </strong>
-
-          ${task.ideas[1]}
-
-        </div>
-
-
-        <div class="idea-item">
-
-          <strong>
-            Idea 3:
-          </strong>
-
-          ${task.ideas[2]}
-
-        </div>
+        <strong>Idea 1:</strong>
+        ${task.ideas[0]}
 
       </div>
 
-    `;
 
+      <div class="idea-item">
+
+        <strong>Idea 2:</strong>
+        ${task.ideas[1]}
+
+      </div>
+
+
+      <div class="idea-item">
+
+        <strong>Idea 3:</strong>
+        ${task.ideas[2]}
+
+      </div>
+
+    </div>
+
+  `;
 }
 
 
 // ======================================================
-// NEXT STEP
+// NEXT WRITE STEP
 // ======================================================
 
 function nextWriteStep() {
 
-  const tasks =
-    getCurrentTasks();
+  const tasks = getCurrentTasks();
 
 
   if (
@@ -1977,18 +1759,14 @@ function nextWriteStep() {
 
     conversationStep++;
 
-    ideaVisible = false;
-
     showWriteStep();
 
   }
-
   else {
 
     showWriteResult();
 
   }
-
 }
 
 
@@ -2002,10 +1780,12 @@ function showWriteResult() {
     getCurrentTasks().length;
 
 
+  currentListenText = "";
+
+
   document.querySelector("main").innerHTML = `
 
     <section class="lesson-card">
-
 
       <div class="level">
         ✍️ WRITE COMPLETED
@@ -2033,10 +1813,11 @@ function showWriteResult() {
           🏆 Your Result
         </h3>
 
+
         <p class="result-score">
 
           <strong>
-            ${conversationScore}
+            ${Math.min(conversationScore, total)}
             /
             ${total}
             tasks completed
@@ -2046,13 +1827,13 @@ function showWriteResult() {
 
 
         <p>
+
           You practiced as the
 
           <strong>
 
             ${
-              currentStudentRole ===
-              "tourist"
+              currentStudentRole === "tourist"
                 ? "Tourist"
                 : "Travel Agent"
             }
@@ -2063,11 +1844,13 @@ function showWriteResult() {
 
 
         <p>
+
           Destination:
 
           <strong>
             ${currentTour.destination}
           </strong>
+
         </p>
 
       </div>
@@ -2076,11 +1859,7 @@ function showWriteResult() {
       <div class="result-buttons">
 
         <button
-          onclick="selectRole(
-            ${currentTour.id},
-            '${currentActivity}',
-            '${currentStudentRole}'
-          )">
+          onclick="selectRole('${currentStudentRole}')">
 
           🔄 Practice Again
 
@@ -2088,10 +1867,7 @@ function showWriteResult() {
 
 
         <button
-          onclick="showRoleSelection(
-            ${currentTour.id},
-            '${currentActivity}'
-          )">
+          onclick="showRoleSelection()">
 
           🎭 Change Role
 
@@ -2099,9 +1875,7 @@ function showWriteResult() {
 
 
         <button
-          onclick="showTourList(
-            '${currentActivity}'
-          )">
+          onclick="showTourList('write')">
 
           🌏 Another Tour
 
@@ -2122,21 +1896,398 @@ function showWriteResult() {
 
       </div>
 
-
     </section>
 
   `;
 
 
-  speakText(
-    "Great work! You completed the writing practice."
+  setTimeout(function () {
+
+    speakText(
+      "Great work! You completed the writing practice."
+    );
+
+  }, 300);
+}
+
+
+// ======================================================
+// TEXT TO SPEECH
+// ======================================================
+
+let englishVoice = null;
+
+
+// Load English voice
+function loadEnglishVoice() {
+
+  if (!("speechSynthesis" in window)) {
+    return;
+  }
+
+
+  const voices =
+    window.speechSynthesis.getVoices();
+
+
+  if (!voices || voices.length === 0) {
+    return;
+  }
+
+
+  englishVoice =
+    voices.find(function (voice) {
+
+      return voice.lang === "en-US";
+
+    });
+
+
+  if (!englishVoice) {
+
+    englishVoice =
+      voices.find(function (voice) {
+
+        return voice.lang
+          .toLowerCase()
+          .startsWith("en");
+
+      });
+
+  }
+}
+
+
+// Load now
+loadEnglishVoice();
+
+
+// Chrome may load voices later
+if ("speechSynthesis" in window) {
+
+  window.speechSynthesis.addEventListener(
+    "voiceschanged",
+    loadEnglishVoice
   );
 
 }
 
 
 // ======================================================
-// CHOOSE - LATER
+// SPEAK TEXT
+// ======================================================
+
+function speakText(text) {
+
+  if (!("speechSynthesis" in window)) {
+
+    alert(
+      "Your browser does not support text-to-speech."
+    );
+
+    return;
+  }
+
+
+  const cleanText =
+    String(text || "").trim();
+
+
+  if (!cleanText) {
+    return;
+  }
+
+
+  const synth =
+    window.speechSynthesis;
+
+
+  // Stop previous speech.
+  synth.cancel();
+
+
+  // IMPORTANT:
+  // A completely new utterance is created every time.
+  const utterance =
+    new SpeechSynthesisUtterance(cleanText);
+
+
+  utterance.lang = "en-US";
+  utterance.rate = 0.82;
+  utterance.pitch = 1;
+  utterance.volume = 1;
+
+
+  if (englishVoice) {
+    utterance.voice = englishVoice;
+  }
+
+
+  // Give Chrome time after cancel().
+  window.setTimeout(
+    function () {
+
+      synth.speak(utterance);
+
+    },
+    180
+  );
+}
+
+
+// ======================================================
+// LISTEN AGAIN
+// ======================================================
+
+function listenAgain() {
+
+  const textToRead =
+    String(currentListenText || "").trim();
+
+
+  if (!textToRead) {
+    return;
+  }
+
+
+  if (!("speechSynthesis" in window)) {
+
+    alert(
+      "Your browser does not support text-to-speech."
+    );
+
+    return;
+  }
+
+
+  const synth =
+    window.speechSynthesis;
+
+
+  // Completely stop current voice.
+  synth.cancel();
+
+
+  // Chrome sometimes needs a short gap
+  // before replaying the same sentence.
+  window.setTimeout(
+    function () {
+
+      const replay =
+        new SpeechSynthesisUtterance(
+          textToRead
+        );
+
+
+      replay.lang = "en-US";
+      replay.rate = 0.82;
+      replay.pitch = 1;
+      replay.volume = 1;
+
+
+      if (englishVoice) {
+        replay.voice = englishVoice;
+      }
+
+
+      synth.speak(replay);
+
+    },
+    250
+  );
+}
+
+
+// ======================================================
+// SIMPLE AUDIO TONES
+// ======================================================
+
+let feedbackAudioContext = null;
+
+
+function getAudioContext() {
+
+  try {
+
+    const AudioContextClass =
+      window.AudioContext ||
+      window.webkitAudioContext;
+
+
+    if (!AudioContextClass) {
+      return null;
+    }
+
+
+    if (!feedbackAudioContext) {
+
+      feedbackAudioContext =
+        new AudioContextClass();
+
+    }
+
+
+    if (
+      feedbackAudioContext.state ===
+      "suspended"
+    ) {
+
+      feedbackAudioContext.resume();
+
+    }
+
+
+    return feedbackAudioContext;
+
+  }
+  catch (error) {
+
+    return null;
+
+  }
+}
+
+
+function playTone(
+  frequency,
+  duration,
+  delay = 0
+) {
+
+  const context =
+    getAudioContext();
+
+
+  if (!context) {
+    return;
+  }
+
+
+  const oscillator =
+    context.createOscillator();
+
+
+  const gain =
+    context.createGain();
+
+
+  oscillator.connect(gain);
+
+  gain.connect(
+    context.destination
+  );
+
+
+  oscillator.type = "sine";
+
+  oscillator.frequency.value =
+    frequency;
+
+
+  const start =
+    context.currentTime + delay;
+
+
+  const finish =
+    start + duration;
+
+
+  gain.gain.setValueAtTime(
+    0.0001,
+    start
+  );
+
+
+  gain.gain.exponentialRampToValueAtTime(
+    0.10,
+    start + 0.02
+  );
+
+
+  gain.gain.exponentialRampToValueAtTime(
+    0.0001,
+    finish
+  );
+
+
+  oscillator.start(start);
+
+  oscillator.stop(
+    finish + 0.03
+  );
+}
+
+
+// ======================================================
+// EXCELLENT AUDIO
+// ======================================================
+
+function playExcellentFeedback() {
+
+  // Success melody
+  playTone(523, 0.12, 0);
+  playTone(659, 0.12, 0.14);
+  playTone(784, 0.20, 0.28);
+
+
+  window.setTimeout(
+    function () {
+
+      speakText("Excellent!");
+
+    },
+    650
+  );
+}
+
+
+// ======================================================
+// GOOD AUDIO
+// ======================================================
+
+function playGoodFeedback() {
+
+  playTone(523, 0.13, 0);
+  playTone(659, 0.18, 0.15);
+
+
+  window.setTimeout(
+    function () {
+
+      speakText("Good!");
+
+    },
+    500
+  );
+}
+
+
+// ======================================================
+// REPEAT AUDIO
+// ======================================================
+
+function playRepeatFeedback() {
+
+  // Different descending sound
+  playTone(440, 0.14, 0);
+  playTone(330, 0.20, 0.17);
+
+
+  window.setTimeout(
+    function () {
+
+      speakText(
+        "Repeat, please."
+      );
+
+    },
+    500
+  );
+}
+
+
+// ======================================================
+// COMING SOON
 // ======================================================
 
 function showChooseComingSoon() {
@@ -2150,7 +2301,7 @@ function showChooseComingSoon() {
       </div>
 
       <h2>
-        👆 Choose Practice
+        Choose Practice
       </h2>
 
       <div class="mission">
@@ -2160,8 +2311,8 @@ function showChooseComingSoon() {
         </h3>
 
         <p>
-          We are completing WRITE first.
-          CHOOSE will be added next.
+          We will build CHOOSE
+          after WRITE is completed.
         </p>
 
       </div>
@@ -2177,13 +2328,8 @@ function showChooseComingSoon() {
     </section>
 
   `;
-
 }
 
-
-// ======================================================
-// SPEAK - LATER
-// ======================================================
 
 function showSpeakComingSoon() {
 
@@ -2196,7 +2342,7 @@ function showSpeakComingSoon() {
       </div>
 
       <h2>
-        🎤 Speak Practice
+        Speak Practice
       </h2>
 
       <div class="mission">
@@ -2206,8 +2352,8 @@ function showSpeakComingSoon() {
         </h3>
 
         <p>
-          Microphone practice will be
-          added after WRITE and CHOOSE.
+          Microphone practice will be added
+          after WRITE and CHOOSE.
         </p>
 
       </div>
@@ -2223,7 +2369,6 @@ function showSpeakComingSoon() {
     </section>
 
   `;
-
 }
 
 
@@ -2234,17 +2379,18 @@ function showSpeakComingSoon() {
 function resetConversation() {
 
   currentTour = null;
-
-  currentActivity = null;
-
+  currentActivity = "write";
   currentStudentRole = null;
 
   conversationStep = 0;
-
   conversationScore = 0;
 
-  ideaVisible = false;
+  currentListenText = "";
 
+
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+  }
 }
 
 
@@ -2254,324 +2400,12 @@ function resetConversation() {
 
 function normalizeText(text) {
 
-  return String(text)
+  return String(text || "")
     .toLowerCase()
     .replace(/[.,!?]/g, "")
     .replace(/[’‘]/g, "'")
     .replace(/\s+/g, " ")
     .trim();
-
-}
-
-
-// ======================================================
-// TEXT TO SPEECH
-// ======================================================
-
-
-// ======================================================
-// AUDIO SYSTEM
-// ======================================================
-
-// Đọc tiếng Anh bằng giọng của trình duyệt.
-// Nút Listen có thể gọi hàm này bao nhiêu lần cũng được.
-// ======================================================
-// LISTEN AGAIN
-// ======================================================
-
-function listenAgain() {
-
-  if (!currentListenText) {
-    return;
-  }
-
-  // Stop the previous voice first
-  if ("speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
-  }
-
-  // Small delay helps Chrome replay
-  // the same sentence reliably.
-  setTimeout(
-    function () {
-
-      speakText(
-        currentListenText
-      );
-
-    },
-    100
-  );
-
-}
-function speakText(text) {
-
-  if (!("speechSynthesis" in window)) {
-
-    alert(
-      "Your browser does not support text-to-speech."
-    );
-
-    return;
-
-  }
-
-
-  window.speechSynthesis.cancel();
-
-
-  const speech =
-    new SpeechSynthesisUtterance(
-      String(text)
-    );
-
-
-  speech.lang = "en-US";
-
-  speech.rate = 0.82;
-
-  speech.pitch = 1;
-
-  speech.volume = 1;
-
-
-  setTimeout(
-    function () {
-
-      window
-        .speechSynthesis
-        .speak(speech);
-
-    },
-    80
-  );
-
-}
-
-
-// ======================================================
-// CREATE SIMPLE SOUND
-// Không cần MP3
-// Không cần API
-// Không mất phí
-// ======================================================
-
-function playTone(
-  frequency,
-  duration,
-  delay = 0
-) {
-
-  try {
-
-    const AudioContext =
-      window.AudioContext ||
-      window.webkitAudioContext;
-
-
-    if (!AudioContext) {
-      return;
-    }
-
-
-    if (!window.roleplayAudioContext) {
-
-      window.roleplayAudioContext =
-        new AudioContext();
-
-    }
-
-
-    const context =
-      window.roleplayAudioContext;
-
-
-    if (context.state === "suspended") {
-
-      context.resume();
-
-    }
-
-
-    const oscillator =
-      context.createOscillator();
-
-
-    const gain =
-      context.createGain();
-
-
-    oscillator.connect(gain);
-
-    gain.connect(
-      context.destination
-    );
-
-
-    oscillator.type = "sine";
-
-    oscillator.frequency.value =
-      frequency;
-
-
-    const startTime =
-      context.currentTime +
-      delay;
-
-
-    const endTime =
-      startTime +
-      duration;
-
-
-    gain.gain.setValueAtTime(
-      0.0001,
-      startTime
-    );
-
-
-    gain.gain.exponentialRampToValueAtTime(
-      0.12,
-      startTime + 0.02
-    );
-
-
-    gain.gain.exponentialRampToValueAtTime(
-      0.0001,
-      endTime
-    );
-
-
-    oscillator.start(
-      startTime
-    );
-
-
-    oscillator.stop(
-      endTime + 0.03
-    );
-
-  }
-
-  catch (error) {
-
-    console.log(
-      "Audio is not available."
-    );
-
-  }
-
-}
-
-
-// ======================================================
-// EXCELLENT SOUND
-// ======================================================
-
-function playExcellentFeedback() {
-
-  // 3 tones going upward
-
-  playTone(
-    523,
-    0.13,
-    0
-  );
-
-  playTone(
-    659,
-    0.13,
-    0.14
-  );
-
-  playTone(
-    784,
-    0.20,
-    0.28
-  );
-
-
-  setTimeout(
-    function () {
-
-      speakText(
-        "Excellent!"
-      );
-
-    },
-    600
-  );
-
-}
-
-
-// ======================================================
-// GOOD SOUND
-// ======================================================
-
-function playGoodFeedback() {
-
-  // 2 gentle success tones
-
-  playTone(
-    523,
-    0.14,
-    0
-  );
-
-  playTone(
-    659,
-    0.18,
-    0.15
-  );
-
-
-  setTimeout(
-    function () {
-
-      speakText(
-        "Good!"
-      );
-
-    },
-    450
-  );
-
-}
-
-
-// ======================================================
-// REPEAT SOUND
-// ======================================================
-
-function playRepeatFeedback() {
-
-  // Different descending sound
-
-  playTone(
-    440,
-    0.15,
-    0
-  );
-
-  playTone(
-    330,
-    0.20,
-    0.17
-  );
-
-
-  setTimeout(
-    function () {
-
-      speakText(
-        "Repeat, please."
-      );
-
-    },
-    450
-  );
-
 }
 
 
@@ -2582,17 +2416,12 @@ function playRepeatFeedback() {
 function escapeHTML(text) {
 
   const div =
-    document.createElement(
-      "div"
-    );
-
+    document.createElement("div");
 
   div.textContent =
-    text;
-
+    String(text);
 
   return div.innerHTML;
-
 }
 
 
@@ -2603,16 +2432,11 @@ function escapeHTML(text) {
 function capitalizeFirst(text) {
 
   if (!text) {
-
     return "";
-
   }
 
-
   return (
-    text.charAt(0).toUpperCase()
-    +
+    text.charAt(0).toUpperCase() +
     text.slice(1)
   );
-
 }
