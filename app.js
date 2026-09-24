@@ -4194,3 +4194,378 @@ function startSimpleWrite() {
   `;
 
 }
+
+// ======================================================
+// SIMPLE WRITE - 10 STEP CONVERSATION
+// ======================================================
+
+const simpleWriteTasks = [
+
+  {
+    ai: "Hello! How can I help you?",
+    model: "I'd like to book a tour, please.",
+    ideas: [
+      "book a tour",
+      "like to book a tour",
+      "I'd like to book a tour, please."
+    ]
+  },
+
+  {
+    ai: "Where would you like to go?",
+    model: "I'd like to go to Da Nang, Viet Nam.",
+    ideas: [
+      "Da Nang",
+      "go to Da Nang, Viet Nam",
+      "I'd like to go to Da Nang, Viet Nam."
+    ]
+  },
+
+  {
+    ai: "When would you like to go?",
+    model: "I'd like to go next weekend.",
+    ideas: [
+      "next weekend",
+      "go next weekend",
+      "I'd like to go next weekend."
+    ]
+  },
+
+  {
+    ai: "How many people are going?",
+    model: "Two people are going.",
+    ideas: [
+      "two people",
+      "two people going",
+      "Two people are going."
+    ]
+  },
+
+  {
+    ai: "What would you like to do there?",
+    model: "I'd like to visit Ba Na Hills.",
+    ideas: [
+      "Ba Na Hills",
+      "visit Ba Na Hills",
+      "I'd like to visit Ba Na Hills."
+    ]
+  },
+
+  {
+    ai: "Where would you like to stay?",
+    model: "I'd like to stay at a hotel.",
+    ideas: [
+      "hotel",
+      "stay at a hotel",
+      "I'd like to stay at a hotel."
+    ]
+  },
+
+  {
+    ai: "What kind of room would you like?",
+    model: "I'd like a double room, please.",
+    ideas: [
+      "double room",
+      "a double room",
+      "I'd like a double room, please."
+    ]
+  },
+
+  {
+    ai: "How long would you like to stay?",
+    model: "I'd like to stay for three days.",
+    ideas: [
+      "three days",
+      "stay for three days",
+      "I'd like to stay for three days."
+    ]
+  },
+
+  {
+    ai: "The tour is $150 per person. Is that okay?",
+    model: "Yes, that's okay.",
+    ideas: [
+      "yes",
+      "that's okay",
+      "Yes, that's okay."
+    ]
+  },
+
+  {
+    ai: "Great. I can book the tour for you.",
+    model: "Thank you very much.",
+    ideas: [
+      "thanks",
+      "thank you",
+      "Thank you very much."
+    ]
+  }
+
+];
+
+
+let simpleWriteStep = 0;
+
+function startSimpleWriteConversation() {
+
+  simpleWriteStep = 0;
+
+  showSimpleWriteStep();
+
+}
+function showSimpleWriteStep() {
+
+  const task = simpleWriteTasks[simpleWriteStep];
+
+  if (!task) {
+    return;
+  }
+
+  currentListenText = task.ai;
+
+  const progress =
+    ((simpleWriteStep + 1) / simpleWriteTasks.length) * 100;
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+      <div class="level">
+        ✍️ WRITE ${simpleWriteStep + 1} / ${simpleWriteTasks.length}
+      </div>
+
+      <div class="progress-track">
+
+        <div
+          class="progress-bar"
+          style="width:${progress}%">
+        </div>
+
+      </div>
+
+      <h2>
+        ✈️ BOOK A TOUR
+      </h2>
+
+      <div class="conversation-role-line">
+
+        <strong>YOU:</strong>
+        🧳 Tourist
+
+        <span>•</span>
+
+        <strong>AI:</strong>
+        👩‍💼 Travel Agent
+
+      </div>
+
+      <div class="ai-message">
+
+        <div class="speaker-label">
+
+          👩‍💼
+
+          <strong>
+            AI Travel Agent
+          </strong>
+
+        </div>
+
+        <p>
+          ${task.ai}
+        </p>
+
+        <button
+          type="button"
+          class="listen-button"
+          id="simpleListenButton">
+
+          🔊 Listen
+
+        </button>
+
+      </div>
+
+      <div class="write-box">
+
+        <h3>
+          ✍️ Your answer
+        </h3>
+
+        <input
+          id="simpleStudentAnswer"
+          type="text"
+          autocomplete="off"
+          placeholder="Write your own English answer..."
+        >
+
+        <button
+          type="button"
+          class="check-button"
+          id="simpleSendButton">
+
+          ✓ Send Answer
+
+        </button>
+
+        <button
+          type="button"
+          class="idea-button"
+          id="simpleIdeaButton">
+
+          💡 Idea
+
+        </button>
+
+      </div>
+
+      <div id="simpleIdeaArea">
+      </div>
+
+      <div
+        id="simpleFeedback"
+        class="feedback-area">
+      </div>
+
+      <div class="back-area">
+
+        <button
+          class="back-button"
+          onclick="startSimpleWrite()">
+
+          ← Back
+
+        </button>
+
+      </div>
+
+    </section>
+
+  `;
+
+
+  document
+    .getElementById("simpleListenButton")
+    .addEventListener(
+      "click",
+      function () {
+
+        currentListenText = task.ai;
+
+        listenAgain();
+
+      }
+    );
+
+
+  document
+    .getElementById("simpleIdeaButton")
+    .addEventListener(
+      "click",
+      function () {
+
+        document
+          .getElementById("simpleIdeaArea")
+          .innerHTML = `
+
+            <div class="idea-panel">
+
+              <h3>
+                💡 Ideas
+              </h3>
+
+              <p>
+                <strong>Idea 1:</strong>
+                ${task.ideas[0]}
+              </p>
+
+              <p>
+                <strong>Idea 2:</strong>
+                ${task.ideas[1]}
+              </p>
+
+              <p>
+                <strong>Idea 3:</strong>
+                ${task.ideas[2]}
+              </p>
+
+            </div>
+
+          `;
+
+      }
+    );
+
+
+  document
+    .getElementById("simpleSendButton")
+    .addEventListener(
+      "click",
+      function () {
+
+        const answer =
+          document
+            .getElementById("simpleStudentAnswer")
+            .value
+            .trim();
+
+        if (!answer) {
+
+          document
+            .getElementById("simpleFeedback")
+            .innerHTML = `
+
+              <div class="repeat-feedback">
+
+                <h3>
+                  🔄 Repeat, please.
+                </h3>
+
+                <p>
+                  Please write an answer first.
+                </p>
+
+              </div>
+
+            `;
+
+          playRepeatFeedback();
+
+          return;
+
+        }
+
+
+        document
+          .getElementById("simpleFeedback")
+          .innerHTML = `
+
+            <div class="success-feedback">
+
+              <h3>
+                👍 Answer received!
+              </h3>
+
+              <p class="student-response">
+
+                <strong>You:</strong>
+                ${escapeHTML(answer)}
+
+              </p>
+
+            </div>
+
+          `;
+
+      }
+    );
+
+
+  document
+    .getElementById("simpleStudentAnswer")
+    .focus();
+
+
+  speakText(task.ai);
+
+}
