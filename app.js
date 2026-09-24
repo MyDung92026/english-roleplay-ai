@@ -248,12 +248,12 @@ function openBookTour() {
             You do not have to copy the sample.
           </p>
 
-          <button
-            onclick="showTourList('write')">
+         <button
+  onclick="startSimpleWrite()">
 
-            Start Write
+  Start Write
 
-          </button>
+</button>
 
         </div>
 
@@ -575,8 +575,7 @@ function showSelectedTour() {
 
         <button
           class="back-button"
-          onclick="showTourList('write')">
-
+          onclick="startSimpleWrite()"
           ← Choose another tour
 
         </button>
@@ -4078,4 +4077,120 @@ function showSpeakComingSoon() {
     </section>
 
   `;
+}
+
+
+
+// ======================================================
+// SIMPLE WRITE - BOOK A TOUR
+// ======================================================
+
+function startSimpleWrite() {
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+      <div class="level">
+        ✍️ WRITE
+      </div>
+
+      <h2>
+        ✈️ BOOK A TOUR
+      </h2>
+
+      <div class="mission">
+
+        <h3>
+          🎯 Your Mission
+        </h3>
+
+        <p>
+          Practice booking a tour in English.
+        </p>
+
+        <p>
+          You will have a 10-step conversation
+          with an AI Travel Agent.
+        </p>
+
+      </div>
+
+      <div class="role-status">
+
+        <div class="role-status-box">
+
+          <span>
+            🧳
+          </span>
+
+          <small>
+            YOU
+          </small>
+
+          <strong>
+            Tourist
+          </strong>
+
+        </div>
+
+        <div class="role-switch">
+          ↔
+        </div>
+
+        <div class="role-status-box">
+
+          <span>
+            👩‍💼
+          </span>
+
+          <small>
+            AI
+          </small>
+
+          <strong>
+            Travel Agent
+          </strong>
+
+        </div>
+
+      </div>
+
+      <div class="idea-panel">
+
+        <strong>
+          💡 Remember
+        </strong>
+
+        <p>
+          You can write your own reasonable answers.
+          You do not have to copy the sample answers.
+        </p>
+
+      </div>
+
+      <button
+        class="continue-button"
+        onclick="startSimpleWriteConversation()">
+
+        Start Conversation ➜
+
+      </button>
+
+      <div class="back-area">
+
+        <button
+          class="back-button"
+          onclick="openBookTour()">
+
+          ← Back to BOOK A TOUR
+
+        </button>
+
+      </div>
+
+    </section>
+
+  `;
+
 }
