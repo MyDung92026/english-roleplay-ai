@@ -757,10 +757,9 @@ function selectRole(studentRole) {
         ✍️ WRITE
       </div>
 
-
-      <h2>
-        ✈️ ${currentTour.destination}
-      </h2>
+<h2>
+  🌏 ${getTourTitle()}
+</h2>
 
 
       <h3>
@@ -3918,7 +3917,20 @@ function escapeHTML(text) {
 // ======================================================
 // CAPITALIZE
 // ======================================================
+// ======================================================
+// DISPLAY TITLE
+// Use country as the main screen title.
+// Destination remains sample tour information.
+// ======================================================
 
+function getTourTitle() {
+
+  if (!currentTour) {
+    return "Booking a Tour";
+  }
+
+  return currentTour.country;
+}
 function capitalizeFirst(text) {
 
   if (!text) {
