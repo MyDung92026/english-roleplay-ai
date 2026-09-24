@@ -1,10 +1,25 @@
-const startButton = document.getElementById("startButton");
-
-startButton.addEventListener("click", openBookTour);
+// ======================================================
+// ENGLISH ROLEPLAY AI
+// BOOK A TOUR
+// ======================================================
 
 
 // ======================================================
-// BOOK A TOUR - TOUR DATA
+// START BUTTON
+// ======================================================
+
+const startButton =
+  document.getElementById("startButton");
+
+
+startButton.addEventListener(
+  "click",
+  openBookTour
+);
+
+
+// ======================================================
+// TOUR DATA
 // ======================================================
 
 const tours = [
@@ -90,25 +105,47 @@ const tours = [
 
 
 // ======================================================
-// MAIN PAGE - BOOK A TOUR
+// CURRENT LEARNING STATE
+// ======================================================
+
+let currentTour = null;
+
+let currentActivity = null;
+
+let currentStudentRole = null;
+
+
+// ======================================================
+// BOOK A TOUR HOME
 // ======================================================
 
 function openBookTour() {
+
+  currentTour = null;
+
+  currentActivity = null;
+
+  currentStudentRole = null;
+
 
   document.querySelector("main").innerHTML = `
 
     <section class="lesson-card">
 
+
       <div class="level">
         A1 • Travel English
       </div>
+
 
       <h2>
         ✈️ BOOK A TOUR
       </h2>
 
+
       <p>
-        Practice English by booking a real-life trip.
+        Practice English through
+        a real-life travel conversation.
       </p>
 
 
@@ -124,8 +161,8 @@ function openBookTour() {
         </p>
 
         <p>
-          You can practice different destinations
-          around the world.
+          You can practice different
+          destinations around the world.
         </p>
 
       </div>
@@ -135,6 +172,8 @@ function openBookTour() {
         Choose a learning activity
       </h3>
 
+
+      <!-- CHOOSE -->
 
       <div class="activity-card">
 
@@ -165,6 +204,8 @@ function openBookTour() {
       </div>
 
 
+      <!-- WRITE -->
+
       <div class="activity-card">
 
         <div class="activity-icon">
@@ -194,6 +235,8 @@ function openBookTour() {
       </div>
 
 
+      <!-- SPEAK -->
+
       <div class="activity-card">
 
         <div class="activity-icon">
@@ -208,7 +251,7 @@ function openBookTour() {
 
           <p>
             Speak your answers
-            and practice pronunciation.
+            and practice conversation.
           </p>
 
           <button
@@ -231,18 +274,22 @@ function openBookTour() {
 
 
 // ======================================================
-// CHOOSE ACTIVITY
+// CHOOSE LEARNING ACTIVITY
 // ======================================================
 
 function chooseActivity(activity) {
 
+  currentActivity = activity;
+
+
   if (activity === "speak") {
 
-    showComingSoon();
+    showSpeakComingSoon();
 
     return;
 
   }
+
 
   showTourList(activity);
 
@@ -250,67 +297,102 @@ function chooseActivity(activity) {
 
 
 // ======================================================
-// TOUR LIST
+// SHOW TOUR LIST
 // ======================================================
 
 function showTourList(activity) {
 
+  currentActivity = activity;
+
+
   let tourCards = "";
 
 
-  tours.forEach(tour => {
+  tours.forEach(
+    tour => {
 
-    tourCards += `
+      tourCards += `
 
-      <div class="tour-card">
+        <div class="tour-card">
 
-        <div class="tour-number">
-          ${tour.id}
+
+          <div class="tour-number">
+
+            ${tour.id}
+
+          </div>
+
+
+          <div class="tour-info">
+
+
+            <h3>
+
+              ${tour.country}
+              — ${tour.destination}
+
+            </h3>
+
+
+            <p>
+
+              🎯
+              ${capitalizeFirst(
+                tour.activity
+              )}
+
+            </p>
+
+
+            <p>
+
+              🏨
+              ${capitalizeFirst(
+                tour.accommodation
+              )}
+
+              •
+
+              ${capitalizeFirst(
+                tour.room
+              )}
+
+            </p>
+
+
+            <p>
+
+              💵
+              ${tour.price}/night
+
+              •
+
+              📅
+              ${tour.stay}
+
+            </p>
+
+
+            <button
+              onclick="selectTour(
+                ${tour.id},
+                '${activity}'
+              )">
+
+              Select this tour
+
+            </button>
+
+
+          </div>
+
+
         </div>
 
+      `;
 
-        <div class="tour-info">
-
-          <h3>
-            ${tour.country}
-            — ${tour.destination}
-          </h3>
-
-
-          <p>
-            🎯 ${capitalizeFirst(tour.activity)}
-          </p>
-
-
-          <p>
-            🏨 ${capitalizeFirst(tour.accommodation)}
-            • ${capitalizeFirst(tour.room)}
-          </p>
-
-
-          <p>
-            💵 ${tour.price}/night
-            • 📅 ${tour.stay}
-          </p>
-
-
-          <button
-            onclick="selectTour(
-              ${tour.id},
-              '${activity}'
-            )">
-
-            Select this tour
-
-          </button>
-
-        </div>
-
-      </div>
-
-    `;
-
-  });
+    }
+  );
 
 
   document.querySelector("main").innerHTML = `
@@ -322,8 +404,8 @@ function showTourList(activity) {
 
         ${
           activity === "choose"
-          ? "👆 CHOOSE"
-          : "✍️ WRITE"
+            ? "👆 CHOOSE"
+            : "✍️ WRITE"
         }
 
       </div>
@@ -383,6 +465,21 @@ function selectTour(
     );
 
 
+  if (!selectedTour) {
+
+    return;
+
+  }
+
+
+  currentTour =
+    selectedTour;
+
+
+  currentActivity =
+    activity;
+
+
   showSelectedTour(
     selectedTour,
     activity
@@ -392,13 +489,21 @@ function selectTour(
 
 
 // ======================================================
-// TOUR INFORMATION
+// SHOW SELECTED TOUR INFORMATION
 // ======================================================
 
 function showSelectedTour(
   tour,
   activity
 ) {
+
+  currentTour =
+    tour;
+
+
+  currentActivity =
+    activity;
+
 
   document.querySelector("main").innerHTML = `
 
@@ -409,8 +514,8 @@ function showSelectedTour(
 
         ${
           activity === "choose"
-          ? "👆 CHOOSE"
-          : "✍️ WRITE"
+            ? "👆 CHOOSE"
+            : "✍️ WRITE"
         }
 
       </div>
@@ -423,50 +528,92 @@ function showSelectedTour(
 
       <div class="mission">
 
+
         <h3>
           🌍 Tour Information
         </h3>
 
 
         <p>
-          <strong>Country:</strong>
+
+          <strong>
+            Country:
+          </strong>
+
           ${tour.country}
+
         </p>
 
 
         <p>
-          <strong>Destination:</strong>
+
+          <strong>
+            Destination:
+          </strong>
+
           ${tour.destination}
+
         </p>
 
 
         <p>
-          <strong>Activity:</strong>
-          ${capitalizeFirst(tour.activity)}
+
+          <strong>
+            Activity:
+          </strong>
+
+          ${capitalizeFirst(
+            tour.activity
+          )}
+
         </p>
 
 
         <p>
-          <strong>Accommodation:</strong>
-          ${capitalizeFirst(tour.accommodation)}
+
+          <strong>
+            Accommodation:
+          </strong>
+
+          ${capitalizeFirst(
+            tour.accommodation
+          )}
+
         </p>
 
 
         <p>
-          <strong>Room:</strong>
-          ${capitalizeFirst(tour.room)}
+
+          <strong>
+            Room:
+          </strong>
+
+          ${capitalizeFirst(
+            tour.room
+          )}
+
         </p>
 
 
         <p>
-          <strong>Price:</strong>
+
+          <strong>
+            Price:
+          </strong>
+
           ${tour.price}/night
+
         </p>
 
 
         <p>
-          <strong>Stay:</strong>
+
+          <strong>
+            Stay:
+          </strong>
+
           ${tour.stay}
+
         </p>
 
 
@@ -479,12 +626,13 @@ function showSelectedTour(
 
 
       <p>
-        In the next step,
-        you will choose your role.
+        Now choose the role
+        you want to practice.
       </p>
 
 
       <div class="role-preview">
+
 
         <div>
 
@@ -511,12 +659,17 @@ function showSelectedTour(
 
         </div>
 
+
       </div>
 
 
       <button
         class="continue-button"
-       onclick="showRoleSelection(${tour.id}, '${activity}')"
+        onclick="showRoleSelection(
+          ${tour.id},
+          '${activity}'
+        )">
+
         Continue ➜
 
       </button>
@@ -526,7 +679,9 @@ function showSelectedTour(
 
         <button
           class="back-button"
-          onclick="showTourList('${activity}')">
+          onclick="showTourList(
+            '${activity}'
+          )">
 
           ← Choose another tour
 
@@ -543,90 +698,7 @@ function showSelectedTour(
 
 
 // ======================================================
-// ROLE PLACEHOLDER
-// ======================================================
-
-function roleComingNext() {
-
-  alert(
-    "Great! The next step will let the student choose Tourist or Travel Agent."
-  );
-
-}
-
-
-// ======================================================
-// SPEAK PLACEHOLDER
-// ======================================================
-
-function showComingSoon() {
-
-  document.querySelector("main").innerHTML = `
-
-    <section class="lesson-card">
-
-
-      <div class="level">
-        🎤 SPEAK
-      </div>
-
-
-      <h2>
-        🎤 Speak Practice
-      </h2>
-
-
-      <div class="mission">
-
-        <h3>
-          Coming Soon
-        </h3>
-
-
-        <p>
-          We will add microphone practice
-          after Choose and Write
-          are working correctly.
-        </p>
-
-      </div>
-
-
-      <button
-        class="back-button"
-        onclick="openBookTour()">
-
-        ← Back to BOOK A TOUR
-
-      </button>
-
-
-    </section>
-
-  `;
-
-}
-
-
-// ======================================================
-// SMALL HELPER
-// ======================================================
-
-function capitalizeFirst(text) {
-
-  if (!text) {
-    return "";
-  }
-
-
-  return (
-    text.charAt(0).toUpperCase()
-    +
-    text.slice(1)
-  );
-
-}// ======================================================
-// ROLE SELECTION
+// CHOOSE YOUR ROLE
 // ======================================================
 
 function showRoleSelection(
@@ -639,6 +711,21 @@ function showRoleSelection(
       item =>
         item.id === tourId
     );
+
+
+  if (!tour) {
+
+    return;
+
+  }
+
+
+  currentTour =
+    tour;
+
+
+  currentActivity =
+    activity;
 
 
   document.querySelector("main").innerHTML = `
@@ -657,32 +744,43 @@ function showRoleSelection(
 
 
       <p>
-        Choose the role you want
-        to practice.
+        Who do you want to be?
       </p>
 
 
       <div class="role-choice-container">
 
 
+        <!-- TOURIST -->
+
         <div class="role-choice-card">
+
 
           <div class="role-big-icon">
             🧳
           </div>
 
+
           <h3>
             Tourist
           </h3>
+
 
           <p>
             You want to book a tour.
           </p>
 
+
           <p class="ai-role-text">
+
             🤖 AI will be the
-            <strong>Travel Agent</strong>.
+
+            <strong>
+              Travel Agent
+            </strong>.
+
           </p>
+
 
           <button
             onclick="selectRole(
@@ -695,28 +793,41 @@ function showRoleSelection(
 
           </button>
 
+
         </div>
 
 
+        <!-- TRAVEL AGENT -->
+
         <div class="role-choice-card">
+
 
           <div class="role-big-icon">
             👩‍💼
           </div>
 
+
           <h3>
             Travel Agent
           </h3>
+
 
           <p>
             You help a tourist
             book a tour.
           </p>
 
+
           <p class="ai-role-text">
+
             🤖 AI will be the
-            <strong>Tourist</strong>.
+
+            <strong>
+              Tourist
+            </strong>.
+
           </p>
+
 
           <button
             onclick="selectRole(
@@ -729,6 +840,7 @@ function showRoleSelection(
 
           </button>
 
+
         </div>
 
 
@@ -740,11 +852,14 @@ function showRoleSelection(
         <button
           class="back-button"
           onclick="showSelectedTour(
-            tours.find(t => t.id === ${tour.id}),
+            tours.find(
+              item =>
+                item.id === ${tour.id}
+            ),
             '${activity}'
           )">
 
-          ← Back
+          ← Back to Tour
 
         </button>
 
@@ -759,7 +874,7 @@ function showRoleSelection(
 
 
 // ======================================================
-// SAVE STUDENT ROLE
+// SELECT ROLE
 // ======================================================
 
 function selectRole(
@@ -773,6 +888,25 @@ function selectRole(
       item =>
         item.id === tourId
     );
+
+
+  if (!tour) {
+
+    return;
+
+  }
+
+
+  currentTour =
+    tour;
+
+
+  currentActivity =
+    activity;
+
+
+  currentStudentRole =
+    studentRole;
 
 
   const studentRoleName =
@@ -805,11 +939,13 @@ function selectRole(
 
 
       <div class="level">
+
         ${
           activity === "choose"
             ? "👆 CHOOSE"
             : "✍️ WRITE"
         }
+
       </div>
 
 
@@ -818,44 +954,59 @@ function selectRole(
       </h2>
 
 
+      <h3>
+        🎭 Your Roles
+      </h3>
+
+
       <div class="role-status">
 
 
         <div class="role-status-box">
 
+
           <span>
             ${studentIcon}
           </span>
+
 
           <small>
             YOU
           </small>
 
+
           <strong>
             ${studentRoleName}
           </strong>
+
 
         </div>
 
 
         <div class="role-switch">
+
           ↔
+
         </div>
 
 
         <div class="role-status-box">
 
+
           <span>
             ${aiIcon}
           </span>
+
 
           <small>
             AI
           </small>
 
+
           <strong>
             ${aiRoleName}
           </strong>
+
 
         </div>
 
@@ -865,46 +1016,51 @@ function selectRole(
 
       <div class="mission">
 
+
         <h3>
           ✅ Ready!
         </h3>
 
+
         <p>
+
           <strong>
             Destination:
           </strong>
 
           ${tour.destination}
+
         </p>
 
 
         <p>
+
           You are the
+
           <strong>
             ${studentRoleName}
           </strong>.
+
         </p>
 
 
         <p>
+
           AI is the
+
           <strong>
             ${aiRoleName}
           </strong>.
+
         </p>
+
 
       </div>
 
 
-      <p>
-        The conversation will start
-        in the next step.
-      </p>
-
-
       <button
         class="continue-button"
-        onclick="conversationComingNext()">
+        onclick="startConversationPreview()">
 
         Start Conversation ➜
 
@@ -935,13 +1091,206 @@ function selectRole(
 
 
 // ======================================================
-// CONVERSATION PLACEHOLDER
+// CONVERSATION PREVIEW
 // ======================================================
 
-function conversationComingNext() {
+function startConversationPreview() {
 
-  alert(
-    "Role selection works! We will build the conversation next."
+  if (
+    !currentTour ||
+    !currentActivity ||
+    !currentStudentRole
+  ) {
+
+    openBookTour();
+
+    return;
+
+  }
+
+
+  const studentRoleName =
+    currentStudentRole === "tourist"
+      ? "Tourist"
+      : "Travel Agent";
+
+
+  const aiRoleName =
+    currentStudentRole === "tourist"
+      ? "Travel Agent"
+      : "Tourist";
+
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+
+      <div class="level">
+        Conversation Ready
+      </div>
+
+
+      <h2>
+        💬 ${currentTour.destination}
+      </h2>
+
+
+      <div class="mission">
+
+
+        <h3>
+          🎉 Role selection works!
+        </h3>
+
+
+        <p>
+
+          <strong>
+            YOU:
+          </strong>
+
+          ${studentRoleName}
+
+        </p>
+
+
+        <p>
+
+          <strong>
+            AI:
+          </strong>
+
+          ${aiRoleName}
+
+        </p>
+
+
+        <p>
+
+          <strong>
+            Destination:
+          </strong>
+
+          ${currentTour.destination}
+
+        </p>
+
+
+      </div>
+
+
+      <p>
+        In the next development step,
+        the real A1 conversation
+        will start here.
+      </p>
+
+
+      <button
+        class="continue-button"
+        onclick="showRoleSelection(
+          ${currentTour.id},
+          '${currentActivity}'
+        )">
+
+        ← Change Role
+
+      </button>
+
+
+      <div class="back-area">
+
+        <button
+          class="back-button"
+          onclick="openBookTour()">
+
+          🏠 BOOK A TOUR
+
+        </button>
+
+      </div>
+
+
+    </section>
+
+  `;
+
+}
+
+
+// ======================================================
+// SPEAK - COMING SOON
+// ======================================================
+
+function showSpeakComingSoon() {
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+
+      <div class="level">
+        🎤 SPEAK
+      </div>
+
+
+      <h2>
+        🎤 Speak Practice
+      </h2>
+
+
+      <div class="mission">
+
+
+        <h3>
+          Coming Soon
+        </h3>
+
+
+        <p>
+          We will add microphone practice
+          after Choose and Write
+          are working correctly.
+        </p>
+
+
+      </div>
+
+
+      <button
+        class="back-button"
+        onclick="openBookTour()">
+
+        ← Back to BOOK A TOUR
+
+      </button>
+
+
+    </section>
+
+  `;
+
+}
+
+
+// ======================================================
+// HELPER
+// ======================================================
+
+function capitalizeFirst(text) {
+
+  if (!text) {
+
+    return "";
+
+  }
+
+
+  return (
+    text.charAt(0).toUpperCase()
+    +
+    text.slice(1)
   );
 
 }
