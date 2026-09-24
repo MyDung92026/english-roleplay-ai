@@ -613,8 +613,8 @@ function showRoleSelection() {
       </div>
 
 
-      <h2>
-        ✈️ ${currentTour.destination}
+    <h2>
+        🌏 ${currentTour.country}
       </h2>
 
 
