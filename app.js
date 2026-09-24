@@ -1,23 +1,29 @@
 // ======================================================
 // ENGLISH ROLEPLAY AI
-// BOOK A TOUR - WRITE A1
-// COMPLETE VERSION
+// BOOK A TOUR - A1
+// FLEXIBLE WRITE VERSION
 // ======================================================
 
 
 // ======================================================
-// START BUTTON
+// START
 // ======================================================
 
-const startButton = document.getElementById("startButton");
+const startButton =
+  document.getElementById("startButton");
 
 if (startButton) {
-  startButton.addEventListener("click", openBookTour);
+  startButton.addEventListener(
+    "click",
+    openBookTour
+  );
 }
 
 
 // ======================================================
 // TOUR DATA
+// These are SAMPLE situations.
+// Students do NOT have to copy these answers.
 // ======================================================
 
 const tours = [
@@ -114,22 +120,50 @@ const tours = [
 // ======================================================
 
 let currentTour = null;
+
 let currentActivity = "write";
+
 let currentStudentRole = null;
 
 let conversationStep = 0;
+
 let conversationScore = 0;
 
 let currentListenText = "";
 
+let currentStepCompleted = false;
+
 
 // ======================================================
-// HOME - BOOK A TOUR
+// CONVERSATION MEMORY
+// Store the student's own choices.
+// ======================================================
+
+let studentChoices = {
+
+  destination: "",
+
+  activity: "",
+
+  accommodation: "",
+
+  room: "",
+
+  stay: "",
+
+  price: ""
+
+};
+
+
+// ======================================================
+// HOME
 // ======================================================
 
 function openBookTour() {
 
   resetConversation();
+
 
   document.querySelector("main").innerHTML = `
 
@@ -148,13 +182,16 @@ function openBookTour() {
         real-life travel conversations.
       </p>
 
+
       <div class="mission">
 
-        <h3>🎯 Your Mission</h3>
+        <h3>
+          🎯 Your Mission
+        </h3>
 
         <p>
-          Choose a learning activity,
-          choose a tour and choose your role.
+          Choose a tour, choose your role,
+          and practice English with AI.
         </p>
 
       </div>
@@ -173,7 +210,9 @@ function openBookTour() {
 
         <div class="activity-info">
 
-          <h3>CHOOSE</h3>
+          <h3>
+            CHOOSE
+          </h3>
 
           <p>
             Choose the best answer
@@ -200,11 +239,13 @@ function openBookTour() {
 
         <div class="activity-info">
 
-          <h3>WRITE</h3>
+          <h3>
+            WRITE
+          </h3>
 
           <p>
-            Write your own answers
-            and talk with AI.
+            Write your own answers.
+            You do not have to copy the sample.
           </p>
 
           <button
@@ -227,7 +268,9 @@ function openBookTour() {
 
         <div class="activity-info">
 
-          <h3>SPEAK</h3>
+          <h3>
+            SPEAK
+          </h3>
 
           <p>
             Speak your answers
@@ -255,58 +298,75 @@ function openBookTour() {
 // TOUR LIST
 // ======================================================
 
-function showTourList(activity = "write") {
+function showTourList(
+  activity = "write"
+) {
 
   currentActivity = activity;
+
 
   let tourCards = "";
 
 
-  tours.forEach(function (tour) {
+  tours.forEach(
+    function (tour) {
 
-    tourCards += `
+      tourCards += `
 
-      <div class="tour-card">
+        <div class="tour-card">
 
-        <div class="tour-number">
-          ${tour.id}
+          <div class="tour-number">
+            ${tour.id}
+          </div>
+
+
+          <div class="tour-info">
+
+            <h3>
+              ${tour.country}
+              —
+              ${tour.destination}
+            </h3>
+
+
+            <p>
+              🎯
+              ${capitalizeFirst(tour.activity)}
+            </p>
+
+
+            <p>
+              🏨
+              ${capitalizeFirst(tour.accommodation)}
+              •
+              ${capitalizeFirst(tour.room)}
+            </p>
+
+
+            <p>
+              💵
+              ${tour.price}/night
+              •
+              📅
+              ${tour.stay}
+            </p>
+
+
+            <button
+              onclick="selectTour(${tour.id})">
+
+              Select this tour
+
+            </button>
+
+          </div>
+
         </div>
 
+      `;
 
-        <div class="tour-info">
-
-          <h3>
-            ${tour.country} — ${tour.destination}
-          </h3>
-
-          <p>
-            🎯 ${capitalizeFirst(tour.activity)}
-          </p>
-
-          <p>
-            🏨 ${capitalizeFirst(tour.accommodation)}
-            • ${capitalizeFirst(tour.room)}
-          </p>
-
-          <p>
-            💵 ${tour.price}/night
-            • 📅 ${tour.stay}
-          </p>
-
-          <button
-            onclick="selectTour(${tour.id}, '${activity}')">
-
-            Select this tour
-
-          </button>
-
-        </div>
-
-      </div>
-
-    `;
-
-  });
+    }
+  );
 
 
   document.querySelector("main").innerHTML = `
@@ -317,17 +377,25 @@ function showTourList(activity = "write") {
         ✍️ WRITE
       </div>
 
+
       <h2>
         🌏 Choose a Tour
       </h2>
 
+
       <p>
-        Choose one destination to practice.
+        The tour information is a sample.
+        You may give different reasonable answers
+        during the conversation.
       </p>
 
+
       <div class="tour-list">
+
         ${tourCards}
+
       </div>
+
 
       <div class="back-area">
 
@@ -351,11 +419,16 @@ function showTourList(activity = "write") {
 // SELECT TOUR
 // ======================================================
 
-function selectTour(tourId, activity) {
+function selectTour(tourId) {
 
-  const tour = tours.find(function (item) {
-    return item.id === tourId;
-  });
+  const tour =
+    tours.find(
+      function (item) {
+
+        return item.id === tourId;
+
+      }
+    );
 
 
   if (!tour) {
@@ -364,24 +437,28 @@ function selectTour(tourId, activity) {
 
 
   currentTour = tour;
-  currentActivity = activity;
+
 
   showSelectedTour();
 }
 
 
 // ======================================================
-// SHOW TOUR INFORMATION
+// TOUR INFORMATION
 // ======================================================
 
 function showSelectedTour() {
 
-  const tour = currentTour;
+  const tour =
+    currentTour;
 
 
   if (!tour) {
+
     openBookTour();
+
     return;
+
   }
 
 
@@ -393,6 +470,7 @@ function showSelectedTour() {
         ✍️ WRITE
       </div>
 
+
       <h2>
         ✈️ ${tour.destination}
       </h2>
@@ -401,38 +479,45 @@ function showSelectedTour() {
       <div class="mission">
 
         <h3>
-          🌍 Tour Information
+          🌍 Sample Tour Information
         </h3>
+
 
         <p>
           <strong>Country:</strong>
           ${tour.country}
         </p>
 
+
         <p>
           <strong>Destination:</strong>
           ${tour.destination}
         </p>
+
 
         <p>
           <strong>Activity:</strong>
           ${capitalizeFirst(tour.activity)}
         </p>
 
+
         <p>
           <strong>Accommodation:</strong>
           ${capitalizeFirst(tour.accommodation)}
         </p>
+
 
         <p>
           <strong>Room:</strong>
           ${capitalizeFirst(tour.room)}
         </p>
 
+
         <p>
           <strong>Price:</strong>
           ${tour.price}/night
         </p>
+
 
         <p>
           <strong>Stay:</strong>
@@ -442,13 +527,24 @@ function showSelectedTour() {
       </div>
 
 
-      <h3>
-        🎭 Next Step
-      </h3>
+      <div class="idea-panel">
 
-      <p>
-        Choose the role you want to practice.
-      </p>
+        <strong>
+          💡 Important:
+        </strong>
+
+        <p>
+          These are sample answers.
+          In WRITE, you can give your own
+          reasonable information.
+        </p>
+
+      </div>
+
+
+      <h3>
+        🎭 Choose your role
+      </h3>
 
 
       <div class="role-preview">
@@ -499,12 +595,12 @@ function showSelectedTour() {
 
 function showRoleSelection() {
 
-  const tour = currentTour;
+  if (!currentTour) {
 
-
-  if (!tour) {
     openBookTour();
+
     return;
+
   }
 
 
@@ -516,9 +612,11 @@ function showRoleSelection() {
         🎭 CHOOSE YOUR ROLE
       </div>
 
+
       <h2>
-        ✈️ ${tour.destination}
+        ✈️ ${currentTour.destination}
       </h2>
+
 
       <p>
         Who do you want to be?
@@ -568,7 +666,8 @@ function showRoleSelection() {
           </h3>
 
           <p>
-            You help a tourist book a tour.
+            You help a tourist
+            book a tour.
           </p>
 
           <p>
@@ -612,10 +711,18 @@ function showRoleSelection() {
 
 function selectRole(studentRole) {
 
-  currentStudentRole = studentRole;
+  currentStudentRole =
+    studentRole;
+
 
   conversationStep = 0;
+
   conversationScore = 0;
+
+  currentStepCompleted = false;
+
+
+  resetStudentChoices();
 
 
   const studentRoleName =
@@ -649,6 +756,7 @@ function selectRole(studentRole) {
       <div class="level">
         ✍️ WRITE
       </div>
+
 
       <h2>
         ✈️ ${currentTour.destination}
@@ -710,18 +818,12 @@ function selectRole(studentRole) {
         </h3>
 
         <p>
-          <strong>Destination:</strong>
-          ${currentTour.destination}
+          Write simple English.
         </p>
 
         <p>
-          You are the
-          <strong>${studentRoleName}</strong>.
-        </p>
-
-        <p>
-          AI is the
-          <strong>${aiRoleName}</strong>.
+          You may use the sample information
+          or give your own reasonable answers.
         </p>
 
       </div>
@@ -756,163 +858,138 @@ function selectRole(studentRole) {
 
 // ======================================================
 // TOURIST TASKS
-// STUDENT = TOURIST
 // ======================================================
 
 function getTouristTasks() {
 
-  const t = currentTour;
+  const t =
+    currentTour;
 
 
   return [
 
     {
+      type: "destination",
+
       ai:
         "Hello! Where would you like to go?",
-
-      keywords: [
-        t.destination
-      ],
-
-      strongKeywords: [
-        "like",
-        "go"
-      ],
 
       model:
         `I'd like to go to ${t.destination}.`,
 
       ideas: [
+
         t.destination,
+
         `go to ${t.destination}`,
+
         `I'd like to go to ${t.destination}.`
+
       ]
     },
 
 
     {
+      type: "activity",
+
       ai:
         "Sure. What would you like to do there?",
-
-      keywords: [
-        t.activityKeyword,
-        t.activity
-      ],
-
-      strongKeywords: [
-        "like",
-        "visit",
-        "go",
-        "try"
-      ],
 
       model:
         `I'd like to ${t.activity}.`,
 
       ideas: [
+
         t.activityKeyword,
+
         t.activity,
+
         `I'd like to ${t.activity}.`
+
       ]
     },
 
 
     {
+      type: "accommodation",
+
       ai:
         "Where would you like to stay?",
-
-      keywords: [
-        t.accommodation
-      ],
-
-      strongKeywords: [
-        "stay",
-        "like"
-      ],
 
       model:
         `I'd like to stay at a ${t.accommodation}.`,
 
       ideas: [
+
         t.accommodation,
+
         `stay at a ${t.accommodation}`,
+
         `I'd like to stay at a ${t.accommodation}.`
+
       ]
     },
 
 
     {
+      type: "room",
+
       ai:
         "What kind of room would you like?",
-
-      keywords: [
-        t.room
-      ],
-
-      strongKeywords: [
-        "room",
-        "like"
-      ],
 
       model:
         `I'd like a ${t.room}, please.`,
 
       ideas: [
+
         t.room,
+
         `a ${t.room}`,
+
         `I'd like a ${t.room}, please.`
+
       ]
     },
 
 
     {
+      type: "stay",
+
       ai:
         "How long are you staying?",
-
-      keywords: [
-        t.stay,
-        t.stay.split(" ")[0]
-      ],
-
-      strongKeywords: [
-        "stay",
-        "staying",
-        "days",
-        "nights"
-      ],
 
       model:
         `I'm staying for ${t.stay}.`,
 
       ideas: [
+
         t.stay,
+
         `for ${t.stay}`,
+
         `I'm staying for ${t.stay}.`
+
       ]
     },
 
 
     {
+      type: "thanks",
+
       ai:
-        `The room is ${t.price} a night. Okay. I can book it for you.`,
-
-      keywords: [
-        "thank you",
-        "thanks"
-      ],
-
-      strongKeywords: [
-        "thank",
-        "thanks"
-      ],
+        `Okay. I can book it for you.`,
 
       model:
         "Thank you.",
 
       ideas: [
+
         "Thanks.",
+
         "Thank you.",
+
         "Thank you very much."
+
       ]
     }
 
@@ -921,39 +998,34 @@ function getTouristTasks() {
 
 
 // ======================================================
-// TRAVEL AGENT TASKS
-// STUDENT = TRAVEL AGENT
+// AGENT TASKS
 // ======================================================
 
 function getAgentTasks() {
 
-  const t = currentTour;
+  const t =
+    currentTour;
 
 
   return [
 
     {
+      type: "askActivity",
+
       ai:
         `Hello. I'd like to book a tour to ${t.destination}, please.`,
-
-      keywords: [
-        "what would you like to do",
-        "what do you want to do",
-        "what would you like"
-      ],
-
-      strongKeywords: [
-        "what",
-        "do"
-      ],
 
       model:
         "Sure. What would you like to do there?",
 
       ideas: [
+
         "activity",
+
         "What would you like to do?",
+
         "Sure. What would you like to do there?"
+
       ],
 
       aiAfter:
@@ -962,27 +1034,22 @@ function getAgentTasks() {
 
 
     {
+      type: "askAccommodation",
+
       ai:
         `I'd like to ${t.activity}.`,
-
-      keywords: [
-        "where would you like to stay",
-        "where do you want to stay",
-        "where will you stay"
-      ],
-
-      strongKeywords: [
-        "where",
-        "stay"
-      ],
 
       model:
         "Where would you like to stay?",
 
       ideas: [
+
         "accommodation",
+
         "Where + stay?",
+
         "Where would you like to stay?"
+
       ],
 
       aiAfter:
@@ -991,26 +1058,22 @@ function getAgentTasks() {
 
 
     {
+      type: "askRoom",
+
       ai:
         `I'd like to stay at a ${t.accommodation}.`,
-
-      keywords: [
-        "what kind of room",
-        "what room",
-        "which room"
-      ],
-
-      strongKeywords: [
-        "room"
-      ],
 
       model:
         "What kind of room would you like?",
 
       ideas: [
+
         "room",
+
         "kind of room",
+
         "What kind of room would you like?"
+
       ],
 
       aiAfter:
@@ -1019,28 +1082,22 @@ function getAgentTasks() {
 
 
     {
+      type: "askStay",
+
       ai:
         `I'd like a ${t.room}, please.`,
-
-      keywords: [
-        "how long are you staying",
-        "how long will you stay",
-        "how many days",
-        "how many nights"
-      ],
-
-      strongKeywords: [
-        "how",
-        "long"
-      ],
 
       model:
         "How long are you staying?",
 
       ideas: [
+
         "length of stay",
+
         "How long?",
+
         "How long are you staying?"
+
       ],
 
       aiAfter:
@@ -1049,55 +1106,46 @@ function getAgentTasks() {
 
 
     {
+      type: "givePrice",
+
       ai:
         `I'm staying for ${t.stay}.`,
-
-      keywords: [
-        t.price,
-        "a night",
-        "per night"
-      ],
-
-      strongKeywords: [
-        "room",
-        "night"
-      ],
 
       model:
         `The room is ${t.price} a night.`,
 
       ideas: [
+
         t.price,
+
         `${t.price} a night`,
+
         `The room is ${t.price} a night.`
+
       ],
 
       aiAfter:
-        "Okay. That sounds good."
+        "That sounds good."
     },
 
 
     {
+      type: "confirmBooking",
+
       ai:
-        "Okay. That sounds good.",
-
-      keywords: [
-        "i can book it for you",
-        "can book it",
-        "book it for you"
-      ],
-
-      strongKeywords: [
-        "book"
-      ],
+        "That sounds good.",
 
       model:
         "Okay. I can book it for you.",
 
       ideas: [
+
         "book",
+
         "book it for you",
+
         "Okay. I can book it for you."
+
       ],
 
       aiAfter:
@@ -1109,14 +1157,19 @@ function getAgentTasks() {
 
 
 // ======================================================
-// GET CURRENT TASKS
+// CURRENT TASKS
 // ======================================================
 
 function getCurrentTasks() {
 
-  if (currentStudentRole === "tourist") {
+  if (
+    currentStudentRole === "tourist"
+  ) {
+
     return getTouristTasks();
+
   }
+
 
   return getAgentTasks();
 }
@@ -1129,31 +1182,47 @@ function getCurrentTasks() {
 function startWriteConversation() {
 
   conversationStep = 0;
+
   conversationScore = 0;
+
+  currentStepCompleted = false;
+
+
+  resetStudentChoices();
+
 
   showWriteStep();
 }
 
 
 // ======================================================
-// SHOW CURRENT WRITE STEP
+// SHOW WRITE STEP
 // ======================================================
 
 function showWriteStep() {
 
-  const tasks = getCurrentTasks();
+  const tasks =
+    getCurrentTasks();
 
-  const task = tasks[conversationStep];
+
+  const task =
+    tasks[conversationStep];
 
 
   if (!task) {
+
     showWriteResult();
+
     return;
+
   }
 
 
-  // This is the sentence Listen will replay.
-  currentListenText = task.ai;
+  currentStepCompleted = false;
+
+
+  currentListenText =
+    task.ai;
 
 
   const aiRole =
@@ -1175,7 +1244,12 @@ function showWriteStep() {
 
 
   const progress =
-    ((conversationStep + 1) / tasks.length) * 100;
+    (
+      (conversationStep + 1)
+      /
+      tasks.length
+    )
+    * 100;
 
 
   document.querySelector("main").innerHTML = `
@@ -1187,7 +1261,8 @@ function showWriteStep() {
 
         ✍️ WRITE
         ${conversationStep + 1}
-        / ${tasks.length}
+        /
+        ${tasks.length}
 
       </div>
 
@@ -1210,12 +1285,15 @@ function showWriteStep() {
       <div class="conversation-role-line">
 
         <strong>YOU:</strong>
+
         ${studentRole}
 
         <span>•</span>
 
         <strong>AI:</strong>
-        ${aiIcon} ${aiRole}
+
+        ${aiIcon}
+        ${aiRole}
 
       </div>
 
@@ -1261,7 +1339,7 @@ function showWriteStep() {
           id="studentAnswer"
           type="text"
           autocomplete="off"
-          placeholder="Write your English answer here..."
+          placeholder="Write your own English answer..."
         >
 
 
@@ -1287,7 +1365,9 @@ function showWriteStep() {
       </div>
 
 
-      <div id="ideaArea"></div>
+      <div id="ideaArea">
+      </div>
+
 
       <div
         id="feedback"
@@ -1312,60 +1392,46 @@ function showWriteStep() {
   `;
 
 
-  // IMPORTANT:
-  // We use addEventListener instead of putting the
-  // sentence directly inside onclick.
-  // This makes Listen much more reliable.
-
-  const listenButton =
-    document.getElementById("listenButton");
-
-  listenButton.addEventListener(
-    "click",
-    function () {
-
-      listenAgain();
-
-    }
-  );
+  document
+    .getElementById("listenButton")
+    .addEventListener(
+      "click",
+      listenAgain
+    );
 
 
-  const sendButton =
-    document.getElementById("sendAnswerButton");
-
-  sendButton.addEventListener(
-    "click",
-    function () {
-
-      checkWriteAnswer();
-
-    }
-  );
+  document
+    .getElementById("sendAnswerButton")
+    .addEventListener(
+      "click",
+      checkWriteAnswer
+    );
 
 
-  const ideaButton =
-    document.getElementById("ideaButton");
-
-  ideaButton.addEventListener(
-    "click",
-    function () {
-
-      showIdeas();
-
-    }
-  );
+  document
+    .getElementById("ideaButton")
+    .addEventListener(
+      "click",
+      showIdeas
+    );
 
 
   const input =
-    document.getElementById("studentAnswer");
+    document.getElementById(
+      "studentAnswer"
+    );
 
 
   input.addEventListener(
     "keydown",
     function (event) {
 
-      if (event.key === "Enter") {
+      if (
+        event.key === "Enter"
+      ) {
+
         checkWriteAnswer();
+
       }
 
     }
@@ -1375,8 +1441,10 @@ function showWriteStep() {
   input.focus();
 
 
-  // AI automatically reads the new sentence once.
-  speakText(currentListenText);
+  // Automatically read new AI sentence.
+  speakText(
+    currentListenText
+  );
 }
 
 
@@ -1386,8 +1454,16 @@ function showWriteStep() {
 
 function checkWriteAnswer() {
 
+  // Do not score the same task twice.
+  if (currentStepCompleted) {
+    return;
+  }
+
+
   const input =
-    document.getElementById("studentAnswer");
+    document.getElementById(
+      "studentAnswer"
+    );
 
 
   if (!input) {
@@ -1411,38 +1487,47 @@ function checkWriteAnswer() {
   }
 
 
-  const tasks = getCurrentTasks();
+  const tasks =
+    getCurrentTasks();
 
-  const task = tasks[conversationStep];
+
+  const task =
+    tasks[conversationStep];
 
 
   const result =
-    evaluateAnswer(
+    evaluateFlexibleAnswer(
       studentText,
       task
     );
 
 
-  if (result === "excellent") {
+  if (
+    result.level === "excellent"
+    ||
+    result.level === "good"
+  ) {
+
+    currentStepCompleted = true;
 
     conversationScore++;
 
-    showSuccessFeedback(
-      "excellent",
+
+    saveStudentChoice(
+      task.type,
       studentText,
-      task
+      result
     );
 
-  }
 
-  else if (result === "good") {
+    lockCurrentAnswer();
 
-    conversationScore++;
 
     showSuccessFeedback(
-      "good",
+      result.level,
       studentText,
-      task
+      task,
+      result
     );
 
   }
@@ -1450,6 +1535,7 @@ function checkWriteAnswer() {
   else {
 
     showRepeatFeedback(
+      result.message ||
       "Try again, or press Idea for help."
     );
 
@@ -1458,74 +1544,950 @@ function checkWriteAnswer() {
 
 
 // ======================================================
-// EVALUATE A1 ANSWER
+// FLEXIBLE ANSWER EVALUATION
 // ======================================================
 
-function evaluateAnswer(studentText, task) {
+function evaluateFlexibleAnswer(
+  studentText,
+  task
+) {
 
   const text =
     normalizeText(studentText);
 
 
-  const model =
-    normalizeText(task.model);
-
-
-  if (text === model) {
-    return "excellent";
-  }
-
-
-  const meaningMatch =
-    task.keywords.some(function (keyword) {
-
-      const normalizedKeyword =
-        normalizeText(keyword);
-
-      return (
-        normalizedKeyword &&
-        text.includes(normalizedKeyword)
-      );
-
-    });
-
-
-  if (!meaningMatch) {
-    return "repeat";
-  }
-
-
-  const strongMatch =
-    task.strongKeywords.some(function (keyword) {
-
-      return text.includes(
-        normalizeText(keyword)
-      );
-
-    });
+  const words =
+    text
+      .split(" ")
+      .filter(Boolean);
 
 
   const wordCount =
-    text.split(" ").filter(Boolean).length;
+    words.length;
 
 
-  if (strongMatch && wordCount >= 4) {
-    return "excellent";
+  if (!text) {
+
+    return {
+      level: "repeat",
+      message:
+        "Please write an answer first."
+    };
+
   }
 
 
-  return "good";
+  // --------------------------------------------------
+  // TOURIST: DESTINATION
+  // --------------------------------------------------
+
+  if (
+    task.type === "destination"
+  ) {
+
+    // Reject obvious unrelated answers.
+    if (
+      containsUnrelatedAnswer(text)
+    ) {
+
+      return repeatResult();
+    }
+
+
+    // Full sentence patterns.
+    if (
+      containsAny(
+        text,
+        [
+          "i'd like to go to",
+          "i would like to go to",
+          "i want to go to",
+          "i'd like to visit",
+          "i would like to visit",
+          "i want to visit",
+          "i'm going to",
+          "i am going to"
+        ]
+      )
+      &&
+      wordCount >= 5
+    ) {
+
+      return {
+        level: "excellent",
+        value:
+          extractAfterDestinationPhrase(
+            studentText
+          )
+      };
+
+    }
+
+
+    // A short place name is accepted.
+    if (
+      looksLikePlaceAnswer(
+        studentText
+      )
+    ) {
+
+      return {
+        level: "good",
+        value:
+          cleanStudentValue(
+            studentText
+          )
+      };
+
+    }
+
+
+    return {
+      level: "repeat",
+      message:
+        "Please answer with a destination or place."
+    };
+  }
+
+
+  // --------------------------------------------------
+  // TOURIST: ACTIVITY
+  // --------------------------------------------------
+
+  if (
+    task.type === "activity"
+  ) {
+
+    if (
+      containsUnrelatedAnswer(text)
+    ) {
+
+      return repeatResult();
+    }
+
+
+    const activityVerbs = [
+
+      "visit",
+      "see",
+      "go",
+      "swim",
+      "swimming",
+      "shop",
+      "shopping",
+      "eat",
+      "try",
+      "explore",
+      "walk",
+      "relax",
+      "tour",
+      "travel",
+      "take",
+      "watch",
+      "enjoy",
+      "climb",
+      "hike",
+      "hiking",
+      "ski",
+      "skiing",
+      "surf",
+      "surfing",
+      "learn",
+      "play",
+      "take photos",
+      "take pictures"
+
+    ];
+
+
+    const hasActivity =
+      containsAny(
+        text,
+        activityVerbs
+      );
+
+
+    if (!hasActivity) {
+
+      return {
+        level: "repeat",
+        message:
+          "Please write an activity you would like to do."
+      };
+
+    }
+
+
+    if (
+      containsAny(
+        text,
+        [
+          "i'd like to",
+          "i would like to",
+          "i want to",
+          "i'd love to",
+          "i would love to"
+        ]
+      )
+      &&
+      wordCount >= 4
+    ) {
+
+      return {
+        level: "excellent",
+        value:
+          cleanStudentValue(
+            studentText
+          )
+      };
+
+    }
+
+
+    return {
+      level: "good",
+      value:
+        cleanStudentValue(
+          studentText
+        )
+    };
+  }
+
+
+  // --------------------------------------------------
+  // TOURIST: ACCOMMODATION
+  // --------------------------------------------------
+
+  if (
+    task.type === "accommodation"
+  ) {
+
+    const accommodations = [
+
+      "hotel",
+      "homestay",
+      "hostel",
+      "resort",
+      "guesthouse",
+      "guest house",
+      "apartment",
+      "motel",
+      "villa",
+      "bungalow",
+      "camp",
+      "campsite",
+      "airbnb"
+
+    ];
+
+
+    const accommodation =
+      findFirstMatch(
+        text,
+        accommodations
+      );
+
+
+    if (!accommodation) {
+
+      return {
+        level: "repeat",
+        message:
+          "Please answer with a place to stay, for example a hotel, homestay, hostel or resort."
+      };
+
+    }
+
+
+    if (
+      containsAny(
+        text,
+        [
+          "i'd like to stay",
+          "i would like to stay",
+          "i want to stay",
+          "i will stay",
+          "i'm staying",
+          "i am staying"
+        ]
+      )
+      &&
+      wordCount >= 5
+    ) {
+
+      return {
+        level: "excellent",
+        value:
+          accommodation
+      };
+
+    }
+
+
+    return {
+      level: "good",
+      value:
+        accommodation
+    };
+  }
+
+
+  // --------------------------------------------------
+  // TOURIST: ROOM
+  // --------------------------------------------------
+
+  if (
+    task.type === "room"
+  ) {
+
+    const roomTypes = [
+
+      "single room",
+      "double room",
+      "twin room",
+      "family room",
+      "triple room",
+      "suite",
+      "deluxe room",
+      "standard room",
+      "private room",
+      "shared room",
+      "connecting room"
+
+    ];
+
+
+    let room =
+      findFirstMatch(
+        text,
+        roomTypes
+      );
+
+
+    if (
+      !room
+      &&
+      text.includes("room")
+      &&
+      wordCount <= 5
+    ) {
+
+      room =
+        cleanStudentValue(
+          studentText
+        );
+
+    }
+
+
+    if (!room) {
+
+      return {
+        level: "repeat",
+        message:
+          "Please answer with a type of room."
+      };
+
+    }
+
+
+    if (
+      containsAny(
+        text,
+        [
+          "i'd like",
+          "i would like",
+          "i want",
+          "can i have",
+          "could i have"
+        ]
+      )
+      &&
+      wordCount >= 4
+    ) {
+
+      return {
+        level: "excellent",
+        value: room
+      };
+
+    }
+
+
+    return {
+      level: "good",
+      value: room
+    };
+  }
+
+
+  // --------------------------------------------------
+  // TOURIST: LENGTH OF STAY
+  // --------------------------------------------------
+
+  if (
+    task.type === "stay"
+  ) {
+
+    const stayInfo =
+      extractStay(
+        studentText
+      );
+
+
+    if (!stayInfo) {
+
+      return {
+        level: "repeat",
+        message:
+          "Please write a reasonable length of stay, for example 4 days or 2 nights."
+      };
+
+    }
+
+
+    if (
+      stayInfo.number < 1
+      ||
+      stayInfo.number > 365
+    ) {
+
+      return {
+        level: "repeat",
+        message:
+          "Please enter a reasonable length of stay."
+      };
+
+    }
+
+
+    if (
+      containsAny(
+        text,
+        [
+          "i'm staying",
+          "i am staying",
+          "i'll stay",
+          "i will stay",
+          "i'm going to stay",
+          "i am going to stay",
+          "we're staying",
+          "we are staying"
+        ]
+      )
+    ) {
+
+      return {
+        level: "excellent",
+        value:
+          stayInfo.value
+      };
+
+    }
+
+
+    return {
+      level: "good",
+      value:
+        stayInfo.value
+    };
+  }
+
+
+  // --------------------------------------------------
+  // TOURIST: THANKS
+  // --------------------------------------------------
+
+  if (
+    task.type === "thanks"
+  ) {
+
+    if (
+      containsAny(
+        text,
+        [
+          "thank you",
+          "thanks",
+          "thank you very much",
+          "thanks a lot"
+        ]
+      )
+    ) {
+
+      if (
+        wordCount >= 3
+      ) {
+
+        return {
+          level: "excellent",
+          value:
+            studentText
+        };
+
+      }
+
+
+      return {
+        level: "good",
+        value:
+          studentText
+      };
+
+    }
+
+
+    return {
+      level: "repeat",
+      message:
+        "Please thank the travel agent."
+    };
+  }
+
+
+  // ==================================================
+  // AGENT QUESTIONS
+  // ==================================================
+
+
+  // --------------------------------------------------
+  // ASK ACTIVITY
+  // --------------------------------------------------
+
+  if (
+    task.type === "askActivity"
+  ) {
+
+    if (
+      text.includes("?")
+      ||
+      containsAny(
+        text,
+        [
+          "what would you like to do",
+          "what do you want to do",
+          "what would you like",
+          "what do you like to do",
+          "what activity"
+        ]
+      )
+    ) {
+
+      if (
+        containsAny(
+          text,
+          [
+            "what would you like to do",
+            "what do you want to do"
+          ]
+        )
+      ) {
+
+        return {
+          level: "excellent"
+        };
+
+      }
+
+
+      return {
+        level: "good"
+      };
+
+    }
+
+
+    return {
+      level: "repeat",
+      message:
+        "Ask the tourist what they would like to do."
+    };
+  }
+
+
+  // --------------------------------------------------
+  // ASK ACCOMMODATION
+  // --------------------------------------------------
+
+  if (
+    task.type === "askAccommodation"
+  ) {
+
+    if (
+      containsAny(
+        text,
+        [
+          "where would you like to stay",
+          "where do you want to stay",
+          "where will you stay",
+          "where are you staying",
+          "what accommodation"
+        ]
+      )
+    ) {
+
+      if (
+        text.includes("where")
+        &&
+        text.includes("stay")
+        &&
+        wordCount >= 5
+      ) {
+
+        return {
+          level: "excellent"
+        };
+
+      }
+
+
+      return {
+        level: "good"
+      };
+
+    }
+
+
+    return {
+      level: "repeat",
+      message:
+        "Ask the tourist where they would like to stay."
+    };
+  }
+
+
+  // --------------------------------------------------
+  // ASK ROOM
+  // --------------------------------------------------
+
+  if (
+    task.type === "askRoom"
+  ) {
+
+    if (
+      text.includes("room")
+      &&
+      containsAny(
+        text,
+        [
+          "what",
+          "which",
+          "kind",
+          "type"
+        ]
+      )
+    ) {
+
+      if (
+        containsAny(
+          text,
+          [
+            "what kind of room",
+            "what type of room",
+            "which room would you like"
+          ]
+        )
+      ) {
+
+        return {
+          level: "excellent"
+        };
+
+      }
+
+
+      return {
+        level: "good"
+      };
+
+    }
+
+
+    return {
+      level: "repeat",
+      message:
+        "Ask the tourist what kind of room they would like."
+    };
+  }
+
+
+  // --------------------------------------------------
+  // ASK STAY
+  // --------------------------------------------------
+
+  if (
+    task.type === "askStay"
+  ) {
+
+    if (
+      containsAny(
+        text,
+        [
+          "how long",
+          "how many days",
+          "how many nights",
+          "length of stay"
+        ]
+      )
+    ) {
+
+      if (
+        text.includes("how long")
+        &&
+        containsAny(
+          text,
+          [
+            "stay",
+            "staying"
+          ]
+        )
+      ) {
+
+        return {
+          level: "excellent"
+        };
+
+      }
+
+
+      return {
+        level: "good"
+      };
+
+    }
+
+
+    return {
+      level: "repeat",
+      message:
+        "Ask the tourist how long they are staying."
+    };
+  }
+
+
+  // --------------------------------------------------
+  // AGENT GIVES PRICE
+  // --------------------------------------------------
+
+  if (
+    task.type === "givePrice"
+  ) {
+
+    const priceInfo =
+      extractPrice(
+        studentText
+      );
+
+
+    if (!priceInfo) {
+
+      return {
+        level: "repeat",
+        message:
+          "Please give a reasonable room price, for example $50 a night."
+      };
+
+    }
+
+
+    if (
+      priceInfo.number <= 0
+      ||
+      priceInfo.number > 10000
+    ) {
+
+      return {
+        level: "repeat",
+        message:
+          "Please enter a reasonable room price."
+      };
+
+    }
+
+
+    if (
+      containsAny(
+        text,
+        [
+          "the room is",
+          "it is",
+          "it costs",
+          "the price is"
+        ]
+      )
+      &&
+      containsAny(
+        text,
+        [
+          "night",
+          "per night",
+          "a night"
+        ]
+      )
+    ) {
+
+      return {
+        level: "excellent",
+        value:
+          priceInfo.value
+      };
+
+    }
+
+
+    return {
+      level: "good",
+      value:
+        priceInfo.value
+    };
+  }
+
+
+  // --------------------------------------------------
+  // CONFIRM BOOKING
+  // --------------------------------------------------
+
+  if (
+    task.type === "confirmBooking"
+  ) {
+
+    if (
+      text.includes("book")
+      &&
+      containsAny(
+        text,
+        [
+          "can",
+          "will",
+          "okay",
+          "sure"
+        ]
+      )
+    ) {
+
+      if (
+        containsAny(
+          text,
+          [
+            "i can book it for you",
+            "i will book it for you",
+            "i'll book it for you"
+          ]
+        )
+      ) {
+
+        return {
+          level: "excellent"
+        };
+
+      }
+
+
+      return {
+        level: "good"
+      };
+
+    }
+
+
+    return {
+      level: "repeat",
+      message:
+        "Tell the tourist that you can book the tour."
+    };
+  }
+
+
+  return repeatResult();
 }
 
 
 // ======================================================
-// GOOD / EXCELLENT
+// SAVE STUDENT'S OWN INFORMATION
+// ======================================================
+
+function saveStudentChoice(
+  type,
+  studentText,
+  result
+) {
+
+  const value =
+    result.value ||
+    cleanStudentValue(
+      studentText
+    );
+
+
+  if (
+    type === "destination"
+  ) {
+
+    studentChoices.destination =
+      value;
+
+  }
+
+
+  if (
+    type === "activity"
+  ) {
+
+    studentChoices.activity =
+      value;
+
+  }
+
+
+  if (
+    type === "accommodation"
+  ) {
+
+    studentChoices.accommodation =
+      value;
+
+  }
+
+
+  if (
+    type === "room"
+  ) {
+
+    studentChoices.room =
+      value;
+
+  }
+
+
+  if (
+    type === "stay"
+  ) {
+
+    studentChoices.stay =
+      value;
+
+  }
+
+
+  if (
+    type === "givePrice"
+  ) {
+
+    studentChoices.price =
+      value;
+
+  }
+}
+
+
+// ======================================================
+// SUCCESS FEEDBACK
 // ======================================================
 
 function showSuccessFeedback(
   level,
   studentText,
-  task
+  task,
+  result
 ) {
 
   const title =
@@ -1534,42 +2496,42 @@ function showSuccessFeedback(
       : "👍 Good!";
 
 
-  if (level === "excellent") {
+  if (
+    level === "excellent"
+  ) {
+
     playExcellentFeedback();
+
   }
   else {
+
     playGoodFeedback();
+
   }
 
 
-  let modelSection = "";
+  let betterSentence = "";
 
 
-  if (level === "good") {
+  if (
+    level === "good"
+  ) {
 
-    modelSection = `
+    betterSentence = `
 
       <p>
-        A better sentence:
+        A natural full sentence:
       </p>
 
       <p class="model-answer">
+
         <strong>
-          ${task.model}
+          ${createFlexibleModel(
+            task,
+            result
+          )}
         </strong>
-      </p>
 
-    `;
-
-  }
-  else {
-
-    modelSection = `
-
-      <p class="model-answer">
-        <strong>
-          ${task.model}
-        </strong>
       </p>
 
     `;
@@ -1581,7 +2543,8 @@ function showSuccessFeedback(
 
 
   if (
-    currentStudentRole === "agent" &&
+    currentStudentRole === "agent"
+    &&
     task.aiAfter
   ) {
 
@@ -1590,8 +2553,14 @@ function showSuccessFeedback(
       <div class="ai-follow-up">
 
         <p>
-          🧳 <strong>AI Tourist:</strong>
+
+          🧳
+          <strong>
+            AI Tourist:
+          </strong>
+
           ${task.aiAfter}
+
         </p>
 
       </div>
@@ -1601,46 +2570,173 @@ function showSuccessFeedback(
   }
 
 
-  document.getElementById("feedback").innerHTML = `
+  document
+    .getElementById("feedback")
+    .innerHTML = `
 
-    <div class="success-feedback">
+      <div class="success-feedback">
 
-      <h3>
-        ${title}
-      </h3>
-
-
-      <p class="student-response">
-
-        <strong>You:</strong>
-        ${escapeHTML(studentText)}
-
-      </p>
+        <h3>
+          ${title}
+        </h3>
 
 
-      ${modelSection}
+        <p class="student-response">
 
-      ${aiFollowUp}
+          <strong>
+            You:
+          </strong>
+
+          ${escapeHTML(studentText)}
+
+        </p>
 
 
-      <button
-        class="continue-button"
-        onclick="nextWriteStep()">
+        ${betterSentence}
 
-        ${
-          conversationStep <
-          getCurrentTasks().length - 1
+        ${aiFollowUp}
 
-            ? "Continue ➜"
 
-            : "Finish 🎉"
-        }
+        <button
+          class="continue-button"
+          onclick="nextWriteStep()">
 
-      </button>
+          ${
+            conversationStep
+            <
+            getCurrentTasks().length - 1
 
-    </div>
+              ? "Continue ➜"
 
-  `;
+              : "Finish 🎉"
+          }
+
+        </button>
+
+      </div>
+
+    `;
+}
+
+
+// ======================================================
+// CREATE A BETTER SENTENCE USING STUDENT'S ANSWER
+// ======================================================
+
+function createFlexibleModel(
+  task,
+  result
+) {
+
+  const value =
+    result.value;
+
+
+  if (
+    task.type === "destination"
+    &&
+    value
+  ) {
+
+    return `I'd like to go to ${value}.`;
+
+  }
+
+
+  if (
+    task.type === "activity"
+    &&
+    value
+  ) {
+
+    return capitalizeFirst(
+      value
+    ) + ".";
+
+  }
+
+
+  if (
+    task.type === "accommodation"
+    &&
+    value
+  ) {
+
+    return `I'd like to stay at a ${value}.`;
+
+  }
+
+
+  if (
+    task.type === "room"
+    &&
+    value
+  ) {
+
+    return `I'd like a ${value}, please.`;
+
+  }
+
+
+  if (
+    task.type === "stay"
+    &&
+    value
+  ) {
+
+    return `I'm staying for ${value}.`;
+
+  }
+
+
+  if (
+    task.type === "givePrice"
+    &&
+    value
+  ) {
+
+    return `The room is ${value} a night.`;
+
+  }
+
+
+  return task.model;
+}
+
+
+// ======================================================
+// LOCK ANSWER AFTER SUCCESS
+// ======================================================
+
+function lockCurrentAnswer() {
+
+  const input =
+    document.getElementById(
+      "studentAnswer"
+    );
+
+
+  const sendButton =
+    document.getElementById(
+      "sendAnswerButton"
+    );
+
+
+  if (input) {
+
+    input.disabled = true;
+
+  }
+
+
+  if (sendButton) {
+
+    sendButton.disabled = true;
+
+    sendButton.textContent =
+      "✓ Answer accepted";
+
+  }
 }
 
 
@@ -1648,13 +2744,17 @@ function showSuccessFeedback(
 // REPEAT
 // ======================================================
 
-function showRepeatFeedback(message) {
+function showRepeatFeedback(
+  message
+) {
 
   playRepeatFeedback();
 
 
   const feedback =
-    document.getElementById("feedback");
+    document.getElementById(
+      "feedback"
+    );
 
 
   if (!feedback) {
@@ -1681,18 +2781,23 @@ function showRepeatFeedback(message) {
 
 
 // ======================================================
-// IDEA - THREE LEVELS
+// IDEAS
 // ======================================================
 
 function showIdeas() {
 
-  const tasks = getCurrentTasks();
+  const tasks =
+    getCurrentTasks();
 
-  const task = tasks[conversationStep];
+
+  const task =
+    tasks[conversationStep];
 
 
   const ideaArea =
-    document.getElementById("ideaArea");
+    document.getElementById(
+      "ideaArea"
+    );
 
 
   if (!ideaArea) {
@@ -1708,15 +2813,20 @@ function showIdeas() {
         💡 Ideas
       </h3>
 
+
       <p>
-        Try one of these ideas,
-        or write your own answer.
+        These are examples only.
+        You can also write your own
+        reasonable answer.
       </p>
 
 
       <div class="idea-item">
 
-        <strong>Idea 1:</strong>
+        <strong>
+          Idea 1:
+        </strong>
+
         ${task.ideas[0]}
 
       </div>
@@ -1724,7 +2834,10 @@ function showIdeas() {
 
       <div class="idea-item">
 
-        <strong>Idea 2:</strong>
+        <strong>
+          Idea 2:
+        </strong>
+
         ${task.ideas[1]}
 
       </div>
@@ -1732,7 +2845,10 @@ function showIdeas() {
 
       <div class="idea-item">
 
-        <strong>Idea 3:</strong>
+        <strong>
+          Idea 3:
+        </strong>
+
         ${task.ideas[2]}
 
       </div>
@@ -1744,24 +2860,29 @@ function showIdeas() {
 
 
 // ======================================================
-// NEXT WRITE STEP
+// NEXT STEP
 // ======================================================
 
 function nextWriteStep() {
 
-  const tasks = getCurrentTasks();
+  const tasks =
+    getCurrentTasks();
 
 
   if (
-    conversationStep <
+    conversationStep
+    <
     tasks.length - 1
   ) {
 
     conversationStep++;
 
+    currentStepCompleted = false;
+
     showWriteStep();
 
   }
+
   else {
 
     showWriteResult();
@@ -1771,7 +2892,7 @@ function nextWriteStep() {
 
 
 // ======================================================
-// RESULT
+// RESULTS
 // ======================================================
 
 function showWriteResult() {
@@ -1786,6 +2907,7 @@ function showWriteResult() {
   document.querySelector("main").innerHTML = `
 
     <section class="lesson-card">
+
 
       <div class="level">
         ✍️ WRITE COMPLETED
@@ -1817,10 +2939,18 @@ function showWriteResult() {
         <p class="result-score">
 
           <strong>
-            ${Math.min(conversationScore, total)}
+
+            ${Math.min(
+              conversationScore,
+              total
+            )}
+
             /
+
             ${total}
+
             tasks completed
+
           </strong>
 
         </p>
@@ -1833,8 +2963,11 @@ function showWriteResult() {
           <strong>
 
             ${
-              currentStudentRole === "tourist"
+              currentStudentRole ===
+              "tourist"
+
                 ? "Tourist"
+
                 : "Travel Agent"
             }
 
@@ -1845,7 +2978,7 @@ function showWriteResult() {
 
         <p>
 
-          Destination:
+          Sample tour:
 
           <strong>
             ${currentTour.destination}
@@ -1901,96 +3034,482 @@ function showWriteResult() {
   `;
 
 
-  setTimeout(function () {
+  window.setTimeout(
+    function () {
 
-    speakText(
-      "Great work! You completed the writing practice."
+      speakText(
+        "Great work! You completed the writing practice."
+      );
+
+    },
+    300
+  );
+}
+
+
+// ======================================================
+// FLEXIBLE HELPER FUNCTIONS
+// ======================================================
+
+function containsAny(
+  text,
+  choices
+) {
+
+  return choices.some(
+    function (choice) {
+
+      return text.includes(
+        normalizeText(choice)
+      );
+
+    }
+  );
+}
+
+
+function findFirstMatch(
+  text,
+  choices
+) {
+
+  return choices.find(
+    function (choice) {
+
+      return text.includes(
+        normalizeText(choice)
+      );
+
+    }
+  ) || "";
+}
+
+
+function repeatResult() {
+
+  return {
+
+    level: "repeat",
+
+    message:
+      "Try again, or press Idea for help."
+
+  };
+}
+
+
+// ======================================================
+// PLACE ANSWER
+// ======================================================
+
+function looksLikePlaceAnswer(
+  originalText
+) {
+
+  const text =
+    normalizeText(
+      originalText
     );
 
-  }, 300);
+
+  const words =
+    text
+      .split(" ")
+      .filter(Boolean);
+
+
+  if (
+    words.length < 1
+    ||
+    words.length > 7
+  ) {
+
+    return false;
+
+  }
+
+
+  const badWords = [
+
+    "room",
+    "hotel",
+    "homestay",
+    "hostel",
+    "resort",
+    "days",
+    "nights",
+    "dollars",
+    "football",
+    "book",
+    "price"
+
+  ];
+
+
+  if (
+    containsAny(
+      text,
+      badWords
+    )
+  ) {
+
+    return false;
+
+  }
+
+
+  return true;
+}
+
+
+// ======================================================
+// UNRELATED ANSWERS
+// ======================================================
+
+function containsUnrelatedAnswer(
+  text
+) {
+
+  const unrelated = [
+
+    "i don't know",
+    "i do not know",
+    "nothing",
+    "no idea",
+    "football"
+
+  ];
+
+
+  return containsAny(
+    text,
+    unrelated
+  );
+}
+
+
+// ======================================================
+// EXTRACT DESTINATION
+// ======================================================
+
+function extractAfterDestinationPhrase(
+  text
+) {
+
+  const patterns = [
+
+    /i['’]?d like to go to\s+(.+)/i,
+
+    /i would like to go to\s+(.+)/i,
+
+    /i want to go to\s+(.+)/i,
+
+    /i['’]?d like to visit\s+(.+)/i,
+
+    /i want to visit\s+(.+)/i
+
+  ];
+
+
+  for (
+    const pattern of patterns
+  ) {
+
+    const match =
+      text.match(pattern);
+
+
+    if (
+      match
+      &&
+      match[1]
+    ) {
+
+      return cleanStudentValue(
+        match[1]
+      );
+
+    }
+  }
+
+
+  return cleanStudentValue(
+    text
+  );
+}
+
+
+// ======================================================
+// EXTRACT STAY
+// ======================================================
+
+function extractStay(text) {
+
+  const normalized =
+    normalizeText(text);
+
+
+  const numberWords = {
+
+    one: 1,
+    two: 2,
+    three: 3,
+    four: 4,
+    five: 5,
+    six: 6,
+    seven: 7,
+    eight: 8,
+    nine: 9,
+    ten: 10,
+    eleven: 11,
+    twelve: 12,
+    fourteen: 14
+
+  };
+
+
+  let match =
+    normalized.match(
+      /(\d+)\s*(day|days|night|nights|week|weeks)/
+    );
+
+
+  if (match) {
+
+    const number =
+      Number(match[1]);
+
+
+    return {
+
+      number: number,
+
+      value:
+        `${match[1]} ${match[2]}`
+
+    };
+  }
+
+
+  for (
+    const word in numberWords
+  ) {
+
+    const regex =
+      new RegExp(
+        `\\b${word}\\s+(day|days|night|nights|week|weeks)\\b`
+      );
+
+
+    const wordMatch =
+      normalized.match(
+        regex
+      );
+
+
+    if (wordMatch) {
+
+      return {
+
+        number:
+          numberWords[word],
+
+        value:
+          `${word} ${wordMatch[1]}`
+
+      };
+    }
+  }
+
+
+  return null;
+}
+
+
+// ======================================================
+// EXTRACT PRICE
+// ======================================================
+
+function extractPrice(text) {
+
+  const normalized =
+    String(text)
+      .toLowerCase()
+      .trim();
+
+
+  let match =
+    normalized.match(
+      /\$\s*(\d+(?:\.\d{1,2})?)/
+    );
+
+
+  if (!match) {
+
+    match =
+      normalized.match(
+        /(\d+(?:\.\d{1,2})?)\s*(?:dollar|dollars|usd)/
+      );
+
+  }
+
+
+  if (!match) {
+    return null;
+  }
+
+
+  const number =
+    Number(match[1]);
+
+
+  return {
+
+    number: number,
+
+    value:
+      `$${match[1]}`
+
+  };
+}
+
+
+// ======================================================
+// CLEAN STUDENT VALUE
+// ======================================================
+
+function cleanStudentValue(text) {
+
+  return String(text)
+    .trim()
+    .replace(/[.!?]+$/g, "");
+}
+
+
+// ======================================================
+// RESET STUDENT CHOICES
+// ======================================================
+
+function resetStudentChoices() {
+
+  studentChoices = {
+
+    destination: "",
+
+    activity: "",
+
+    accommodation: "",
+
+    room: "",
+
+    stay: "",
+
+    price: ""
+
+  };
 }
 
 
 // ======================================================
 // TEXT TO SPEECH
+// KEEPING THE WORKING LISTEN SYSTEM
 // ======================================================
 
 let englishVoice = null;
 
 
-// Load English voice
 function loadEnglishVoice() {
 
-  if (!("speechSynthesis" in window)) {
+  if (
+    !("speechSynthesis" in window)
+  ) {
+
     return;
+
   }
 
 
   const voices =
-    window.speechSynthesis.getVoices();
+    window
+      .speechSynthesis
+      .getVoices();
 
 
-  if (!voices || voices.length === 0) {
+  if (
+    !voices
+    ||
+    voices.length === 0
+  ) {
+
     return;
+
   }
 
 
   englishVoice =
-    voices.find(function (voice) {
+    voices.find(
+      function (voice) {
 
-      return voice.lang === "en-US";
+        return (
+          voice.lang === "en-US"
+        );
 
-    });
+      }
+    );
 
 
   if (!englishVoice) {
 
     englishVoice =
-      voices.find(function (voice) {
+      voices.find(
+        function (voice) {
 
-        return voice.lang
-          .toLowerCase()
-          .startsWith("en");
+          return voice.lang
+            .toLowerCase()
+            .startsWith("en");
 
-      });
+        }
+      );
 
   }
 }
 
 
-// Load now
 loadEnglishVoice();
 
 
-// Chrome may load voices later
-if ("speechSynthesis" in window) {
+if (
+  "speechSynthesis" in window
+) {
 
-  window.speechSynthesis.addEventListener(
-    "voiceschanged",
-    loadEnglishVoice
-  );
-
+  window
+    .speechSynthesis
+    .addEventListener(
+      "voiceschanged",
+      loadEnglishVoice
+    );
 }
 
 
 // ======================================================
-// SPEAK TEXT
+// SPEAK
 // ======================================================
 
 function speakText(text) {
 
-  if (!("speechSynthesis" in window)) {
-
-    alert(
-      "Your browser does not support text-to-speech."
-    );
+  if (
+    !("speechSynthesis" in window)
+  ) {
 
     return;
+
   }
 
 
   const cleanText =
-    String(text || "").trim();
+    String(
+      text || ""
+    ).trim();
 
 
   if (!cleanText) {
@@ -2002,32 +3521,42 @@ function speakText(text) {
     window.speechSynthesis;
 
 
-  // Stop previous speech.
   synth.cancel();
 
 
-  // IMPORTANT:
-  // A completely new utterance is created every time.
   const utterance =
-    new SpeechSynthesisUtterance(cleanText);
+    new SpeechSynthesisUtterance(
+      cleanText
+    );
 
 
-  utterance.lang = "en-US";
-  utterance.rate = 0.82;
-  utterance.pitch = 1;
-  utterance.volume = 1;
+  utterance.lang =
+    "en-US";
+
+  utterance.rate =
+    0.82;
+
+  utterance.pitch =
+    1;
+
+  utterance.volume =
+    1;
 
 
   if (englishVoice) {
-    utterance.voice = englishVoice;
+
+    utterance.voice =
+      englishVoice;
+
   }
 
 
-  // Give Chrome time after cancel().
   window.setTimeout(
     function () {
 
-      synth.speak(utterance);
+      synth.speak(
+        utterance
+      );
 
     },
     180
@@ -2042,7 +3571,9 @@ function speakText(text) {
 function listenAgain() {
 
   const textToRead =
-    String(currentListenText || "").trim();
+    String(
+      currentListenText || ""
+    ).trim();
 
 
   if (!textToRead) {
@@ -2050,13 +3581,12 @@ function listenAgain() {
   }
 
 
-  if (!("speechSynthesis" in window)) {
-
-    alert(
-      "Your browser does not support text-to-speech."
-    );
+  if (
+    !("speechSynthesis" in window)
+  ) {
 
     return;
+
   }
 
 
@@ -2064,12 +3594,9 @@ function listenAgain() {
     window.speechSynthesis;
 
 
-  // Completely stop current voice.
   synth.cancel();
 
 
-  // Chrome sometimes needs a short gap
-  // before replaying the same sentence.
   window.setTimeout(
     function () {
 
@@ -2079,18 +3606,30 @@ function listenAgain() {
         );
 
 
-      replay.lang = "en-US";
-      replay.rate = 0.82;
-      replay.pitch = 1;
-      replay.volume = 1;
+      replay.lang =
+        "en-US";
+
+      replay.rate =
+        0.82;
+
+      replay.pitch =
+        1;
+
+      replay.volume =
+        1;
 
 
       if (englishVoice) {
-        replay.voice = englishVoice;
+
+        replay.voice =
+          englishVoice;
+
       }
 
 
-      synth.speak(replay);
+      synth.speak(
+        replay
+      );
 
     },
     250
@@ -2099,10 +3638,11 @@ function listenAgain() {
 
 
 // ======================================================
-// SIMPLE AUDIO TONES
+// AUDIO FEEDBACK
 // ======================================================
 
-let feedbackAudioContext = null;
+let feedbackAudioContext =
+  null;
 
 
 function getAudioContext() {
@@ -2110,16 +3650,21 @@ function getAudioContext() {
   try {
 
     const AudioContextClass =
-      window.AudioContext ||
+      window.AudioContext
+      ||
       window.webkitAudioContext;
 
 
     if (!AudioContextClass) {
+
       return null;
+
     }
 
 
-    if (!feedbackAudioContext) {
+    if (
+      !feedbackAudioContext
+    ) {
 
       feedbackAudioContext =
         new AudioContextClass();
@@ -2128,7 +3673,8 @@ function getAudioContext() {
 
 
     if (
-      feedbackAudioContext.state ===
+      feedbackAudioContext.state
+      ===
       "suspended"
     ) {
 
@@ -2140,6 +3686,7 @@ function getAudioContext() {
     return feedbackAudioContext;
 
   }
+
   catch (error) {
 
     return null;
@@ -2178,18 +3725,24 @@ function playTone(
   );
 
 
-  oscillator.type = "sine";
+  oscillator.type =
+    "sine";
+
 
   oscillator.frequency.value =
     frequency;
 
 
   const start =
-    context.currentTime + delay;
+    context.currentTime
+    +
+    delay;
 
 
   const finish =
-    start + duration;
+    start
+    +
+    duration;
 
 
   gain.gain.setValueAtTime(
@@ -2198,19 +3751,24 @@ function playTone(
   );
 
 
-  gain.gain.exponentialRampToValueAtTime(
-    0.10,
-    start + 0.02
+  gain.gain
+    .exponentialRampToValueAtTime(
+      0.10,
+      start + 0.02
+    );
+
+
+  gain.gain
+    .exponentialRampToValueAtTime(
+      0.0001,
+      finish
+    );
+
+
+  oscillator.start(
+    start
   );
 
-
-  gain.gain.exponentialRampToValueAtTime(
-    0.0001,
-    finish
-  );
-
-
-  oscillator.start(start);
 
   oscillator.stop(
     finish + 0.03
@@ -2219,21 +3777,36 @@ function playTone(
 
 
 // ======================================================
-// EXCELLENT AUDIO
+// EXCELLENT
 // ======================================================
 
 function playExcellentFeedback() {
 
-  // Success melody
-  playTone(523, 0.12, 0);
-  playTone(659, 0.12, 0.14);
-  playTone(784, 0.20, 0.28);
+  playTone(
+    523,
+    0.12,
+    0
+  );
+
+  playTone(
+    659,
+    0.12,
+    0.14
+  );
+
+  playTone(
+    784,
+    0.20,
+    0.28
+  );
 
 
   window.setTimeout(
     function () {
 
-      speakText("Excellent!");
+      speakText(
+        "Excellent!"
+      );
 
     },
     650
@@ -2242,19 +3815,30 @@ function playExcellentFeedback() {
 
 
 // ======================================================
-// GOOD AUDIO
+// GOOD
 // ======================================================
 
 function playGoodFeedback() {
 
-  playTone(523, 0.13, 0);
-  playTone(659, 0.18, 0.15);
+  playTone(
+    523,
+    0.13,
+    0
+  );
+
+  playTone(
+    659,
+    0.18,
+    0.15
+  );
 
 
   window.setTimeout(
     function () {
 
-      speakText("Good!");
+      speakText(
+        "Good!"
+      );
 
     },
     500
@@ -2263,14 +3847,22 @@ function playGoodFeedback() {
 
 
 // ======================================================
-// REPEAT AUDIO
+// REPEAT
 // ======================================================
 
 function playRepeatFeedback() {
 
-  // Different descending sound
-  playTone(440, 0.14, 0);
-  playTone(330, 0.20, 0.17);
+  playTone(
+    440,
+    0.14,
+    0
+  );
+
+  playTone(
+    330,
+    0.20,
+    0.17
+  );
 
 
   window.setTimeout(
@@ -2287,12 +3879,115 @@ function playRepeatFeedback() {
 
 
 // ======================================================
+// NORMALIZE
+// ======================================================
+
+function normalizeText(text) {
+
+  return String(
+    text || ""
+  )
+    .toLowerCase()
+    .replace(/[.,!?]/g, "")
+    .replace(/[’‘]/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+
+// ======================================================
+// ESCAPE HTML
+// ======================================================
+
+function escapeHTML(text) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+
+  div.textContent =
+    String(text);
+
+
+  return div.innerHTML;
+}
+
+
+// ======================================================
+// CAPITALIZE
+// ======================================================
+
+function capitalizeFirst(text) {
+
+  if (!text) {
+    return "";
+  }
+
+
+  return (
+    text
+      .charAt(0)
+      .toUpperCase()
+    +
+    text.slice(1)
+  );
+}
+
+
+// ======================================================
+// RESET
+// ======================================================
+
+function resetConversation() {
+
+  currentTour = null;
+
+  currentActivity =
+    "write";
+
+  currentStudentRole =
+    null;
+
+  conversationStep =
+    0;
+
+  conversationScore =
+    0;
+
+  currentStepCompleted =
+    false;
+
+  currentListenText =
+    "";
+
+
+  resetStudentChoices();
+
+
+  if (
+    "speechSynthesis"
+    in window
+  ) {
+
+    window
+      .speechSynthesis
+      .cancel();
+
+  }
+}
+
+
+// ======================================================
 // COMING SOON
 // ======================================================
 
 function showChooseComingSoon() {
 
-  document.querySelector("main").innerHTML = `
+  document.querySelector(
+    "main"
+  ).innerHTML = `
 
     <section class="lesson-card">
 
@@ -2333,7 +4028,9 @@ function showChooseComingSoon() {
 
 function showSpeakComingSoon() {
 
-  document.querySelector("main").innerHTML = `
+  document.querySelector(
+    "main"
+  ).innerHTML = `
 
     <section class="lesson-card">
 
@@ -2369,74 +4066,4 @@ function showSpeakComingSoon() {
     </section>
 
   `;
-}
-
-
-// ======================================================
-// RESET
-// ======================================================
-
-function resetConversation() {
-
-  currentTour = null;
-  currentActivity = "write";
-  currentStudentRole = null;
-
-  conversationStep = 0;
-  conversationScore = 0;
-
-  currentListenText = "";
-
-
-  if ("speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
-  }
-}
-
-
-// ======================================================
-// NORMALIZE TEXT
-// ======================================================
-
-function normalizeText(text) {
-
-  return String(text || "")
-    .toLowerCase()
-    .replace(/[.,!?]/g, "")
-    .replace(/[’‘]/g, "'")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-
-// ======================================================
-// ESCAPE HTML
-// ======================================================
-
-function escapeHTML(text) {
-
-  const div =
-    document.createElement("div");
-
-  div.textContent =
-    String(text);
-
-  return div.innerHTML;
-}
-
-
-// ======================================================
-// CAPITALIZE
-// ======================================================
-
-function capitalizeFirst(text) {
-
-  if (!text) {
-    return "";
-  }
-
-  return (
-    text.charAt(0).toUpperCase() +
-    text.slice(1)
-  );
 }
