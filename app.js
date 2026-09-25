@@ -4171,7 +4171,7 @@ function startSimpleWrite() {
 
       <button
         class="continue-button"
-        onclick="startSimpleWriteConversation()">
+        onclick="showSimpleWriteRoleSelection()"
 
         Start Conversation ➜
 
@@ -5114,5 +5114,225 @@ function showSimpleWriteResult() {
     },
     300
   );
+
+}
+
+// ======================================================
+// SIMPLE WRITE - CHOOSE ROLE
+// ======================================================
+
+let simpleWriteRole = "tourist";
+
+function showSimpleWriteRoleSelection() {
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+      <div class="level">
+        ✍️ WRITE
+      </div>
+
+      <h2>
+        ✈️ BOOK A TOUR
+      </h2>
+
+      <div class="mission">
+
+        <h3>
+          👤 Choose Your Role
+        </h3>
+
+        <p>
+          Choose a role for the conversation.
+        </p>
+
+      </div>
+
+      <div class="role-choice-container">
+
+        <div class="role-choice-card">
+
+          <div class="role-big-icon">
+            🧳
+          </div>
+
+          <h3>
+            Tourist
+          </h3>
+
+          <p>
+            You are the Tourist.
+          </p>
+
+          <p>
+            AI will be the Travel Agent.
+          </p>
+
+          <button
+            class="continue-button"
+            onclick="selectSimpleWriteRole('tourist')">
+
+            Choose Tourist
+
+          </button>
+
+        </div>
+
+
+        <div class="role-choice-card">
+
+          <div class="role-big-icon">
+            👩‍💼
+          </div>
+
+          <h3>
+            Travel Agent
+          </h3>
+
+          <p>
+            You are the Travel Agent.
+          </p>
+
+          <p>
+            AI will be the Tourist.
+          </p>
+
+          <button
+            class="continue-button"
+            onclick="selectSimpleWriteRole('agent')">
+
+            Choose Travel Agent
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="back-area">
+
+        <button
+          class="back-button"
+          onclick="startSimpleWrite()">
+
+          ← Back
+
+        </button>
+
+      </div>
+
+    </section>
+
+  `;
+
+}
+
+
+// ======================================================
+// SELECT SIMPLE WRITE ROLE
+// ======================================================
+
+function selectSimpleWriteRole(role) {
+
+  simpleWriteRole = role;
+
+  if (role === "tourist") {
+
+    startSimpleWriteConversation();
+
+    return;
+
+  }
+
+  showSimpleAgentComingSoon();
+
+}
+
+
+// ======================================================
+// TEMPORARY AGENT SCREEN
+// ======================================================
+
+function showSimpleAgentComingSoon() {
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+      <div class="level">
+        ✍️ WRITE
+      </div>
+
+      <h2>
+        ✈️ BOOK A TOUR
+      </h2>
+
+      <div class="role-status">
+
+        <div class="role-status-box">
+
+          <span>
+            👩‍💼
+          </span>
+
+          <small>
+            YOU
+          </small>
+
+          <strong>
+            Travel Agent
+          </strong>
+
+        </div>
+
+        <div class="role-switch">
+          ↔
+        </div>
+
+        <div class="role-status-box">
+
+          <span>
+            🧳
+          </span>
+
+          <small>
+            AI
+          </small>
+
+          <strong>
+            Tourist
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="mission">
+
+        <h3>
+          👩‍💼 Travel Agent
+        </h3>
+
+        <p>
+          This role is ready for the next step.
+        </p>
+
+      </div>
+
+
+      <button
+        class="continue-button"
+        onclick="showSimpleWriteRoleSelection()">
+
+        ← Choose Another Role
+
+      </button>
+
+    </section>
+
+  `;
 
 }
