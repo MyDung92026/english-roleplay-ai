@@ -6914,9 +6914,9 @@ function startStudentSpeech() {
       document.getElementById("speakButton");
 
     if (button) {
-      button.disabled = true;
-      button.textContent = "🎤 Listening...";
-    }
+  button.disabled = false;
+  button.textContent = "🎤 Listening...";
+}
 
     if (status) {
       status.innerHTML =
@@ -7016,7 +7016,7 @@ function startStudentSpeech() {
 
     if (button && !speakScoredSteps[speakStep]) {
       button.disabled = false;
-      button.textContent = "🎤 Speak";
+      button.textContent = "🎤 Speak Again";
     }
 
   };
@@ -7071,8 +7071,42 @@ function checkSpokenAnswer(answer) {
 
     showSpeakRepeat(answer);
 
+    window.setTimeout(function () {
+
+        const button =
+            document.getElementById("speakButton");
+
+        if (button) {
+            button.disabled = false;
+            button.textContent = "🎤 Speak Again";
+        }
+
+        const status =
+            document.getElementById("speakStatus");
+
+        if (status) {
+
+            status.insertAdjacentHTML(
+                "beforeend",
+                `
+                <div style="margin-top:16px;">
+                    <button
+                        type="button"
+                        class="continue-button"
+                        onclick="continueSpeakAfterWrong()"
+                    >
+                        Continue →
+                    </button>
+                </div>
+                `
+            );
+
+        }
+
+    }, 300);
+
     return;
-  }
+}
 
   const points =
     speakIdeaUsed ? 0.5 : 1;
@@ -7681,6 +7715,32 @@ function showSpeakRepeat(answer) {
 
 }
 
+// =====================================================
+// CONTINUE AFTER A WRONG SPOKEN ANSWER
+// =====================================================
+
+function continueSpeakAfterWrong() {
+
+    // Stop microphone if it is still running
+    if (speakRecognition) {
+        try {
+            speakRecognition.abort();
+        } catch (error) {
+            // Ignore
+        }
+    }
+
+    speakListening = false;
+
+    // Do NOT add points for the skipped answer
+    speakScoredSteps[speakStep] = true;
+
+    // Move to the next conversation step
+    speakStep++;
+
+    // Show the next step
+    showSpeakStep();
+}
 
 // ============================================================
 // NEXT SPEAK STEP
