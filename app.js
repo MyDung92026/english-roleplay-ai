@@ -7199,46 +7199,129 @@ function isCompleteSpokenSentence(text) {
 
 function isSpeakAnswerRelevant(text, type) {
 
-  const hasAny = function (items) {
+  // =====================================================
+  // STRICTER A1 SPEAK CHECK
+  // Checks:
+  // 1. Answer is relevant to the task.
+  // 2. Answer has a reasonable A1 sentence structure.
+  // 3. Keyword alone is NOT enough.
+  // =====================================================
 
+  text = String(text || "")
+    .toLowerCase()
+    .replace(/[.,!?]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!text) return false;
+
+  const words = text.split(" ").filter(Boolean);
+
+  const hasAny = function (items) {
     return items.some(function (item) {
       return text.includes(item);
     });
-
   };
 
+  const hasNumber =
+    /\d/.test(text) ||
+    hasAny([
+      "one", "two", "three", "four", "five",
+      "six", "seven", "eight", "nine", "ten",
+      "eleven", "twelve", "thirteen", "fourteen",
+      "fifteen", "sixteen", "seventeen",
+      "eighteen", "nineteen", "twenty"
+    ]);
+
+  // Reject very short fragments for tasks that require sentences.
+  const completeEnough = words.length >= 3;
+
+  // Common suspicious recognition / wrong-structure phrases.
+  // Example:
+  // "I like to say it's a hotel"
+  const suspiciousAnswer =
+    hasAny([
+      "i like to say",
+      "i would like to say",
+      "i want to say",
+      "i am saying",
+      "i'm saying",
+      "i said",
+      "you said",
+      "he said",
+      "she said"
+    ]);
+
+  if (suspiciousAnswer) {
+    return false;
+  }
 
   switch (type) {
 
-    case "book":
+    // ===================================================
+    // TOURIST: BOOK
+    // ===================================================
+
+    case "book": {
+
+      if (!completeEnough) return false;
 
       return hasAny([
-        "book a tour",
-        "book a trip",
-        "book the tour",
-        "book the trip",
-        "take a tour",
-        "take a trip"
+        "i'd like to book",
+        "i would like to book",
+        "i want to book",
+        "can i book",
+        "could i book",
+        "i'd like to take a tour",
+        "i would like to take a tour",
+        "i want to take a tour",
+        "i'd like to take a trip",
+        "i would like to take a trip"
       ]);
 
-
-    case "destination":
-
-      return hasAny([
-        "go to",
-        "travel to",
-        "visit",
-        "trip to",
-        "tour to"
-      ]);
+    }
 
 
-    case "time":
+    // ===================================================
+    // TOURIST: DESTINATION
+    // ===================================================
 
-      return hasAny([
-        "next ",
-        "this ",
+    case "destination": {
+
+      if (!completeEnough) return false;
+
+      const destinationStructure =
+        hasAny([
+          "i'd like to go to ",
+          "i would like to go to ",
+          "i want to go to ",
+          "i'd like to travel to ",
+          "i would like to travel to ",
+          "i want to travel to ",
+          "i'm going to ",
+          "i am going to ",
+          "i'd like to visit ",
+          "i would like to visit ",
+          "i want to visit "
+        ]);
+
+      return destinationStructure;
+
+    }
+
+
+    // ===================================================
+    // TOURIST: TIME
+    // ===================================================
+
+    case "time": {
+
+      if (!completeEnough) return false;
+
+      const timeWord = hasAny([
+        "today",
         "tomorrow",
+        "tonight",
         "monday",
         "tuesday",
         "wednesday",
@@ -7246,36 +7329,90 @@ function isSpeakAnswerRelevant(text, type) {
         "friday",
         "saturday",
         "sunday",
-        "week",
-        "weekend",
-        "month",
         "morning",
         "afternoon",
-        "evening"
+        "evening",
+        "week",
+        "weekend",
+        "next week",
+        "next month"
       ]);
 
+      const timeStructure =
+        hasAny([
+          "i'd like to go",
+          "i would like to go",
+          "i want to go",
+          "i'm going",
+          "i am going",
+          "i'd like to travel",
+          "i would like to travel",
+          "i want to travel",
+          "i'm traveling",
+          "i am traveling",
+          "i'm travelling",
+          "i am travelling"
+        ]);
 
-    case "activity":
+      return timeWord && timeStructure;
 
-      return hasAny([
-        "visit ",
-        "go ",
-        "see ",
-        "swim",
-        "sightseeing",
-        "shopping",
-        "explore",
-        "try ",
-        "eat ",
-        "relax"
-      ]);
+    }
 
 
-    case "accommodation":
+    // ===================================================
+    // TOURIST: ACTIVITY
+    // ===================================================
 
-      return hasAny([
-        "stay at",
-        "stay in",
+    case "activity": {
+
+      if (!completeEnough) return false;
+
+      const activityStructure =
+        hasAny([
+          "i'd like to ",
+          "i would like to ",
+          "i want to ",
+          "i'd love to ",
+          "i plan to ",
+          "i'm going to ",
+          "i am going to "
+        ]);
+
+      const activityVerb =
+        hasAny([
+          "visit ",
+          "go ",
+          "see ",
+          "swim",
+          "sightsee",
+          "sightseeing",
+          "shop",
+          "shopping",
+          "explore",
+          "try ",
+          "eat ",
+          "walk",
+          "relax",
+          "take ",
+          "watch ",
+          "learn ",
+          "experience "
+        ]);
+
+      return activityStructure && activityVerb;
+
+    }
+
+
+    // ===================================================
+    // TOURIST: ACCOMMODATION
+    // ===================================================
+
+    case "accommodation": {
+
+      if (!completeEnough) return false;
+
+      const place = hasAny([
         "hotel",
         "homestay",
         "hostel",
@@ -7284,234 +7421,413 @@ function isSpeakAnswerRelevant(text, type) {
         "guest house",
         "apartment",
         "villa",
-        "motel"
+        "motel",
+        "bungalow",
+        "campsite"
       ]);
 
+      const stayStructure =
+        hasAny([
+          "i'd like to stay at ",
+          "i'd like to stay in ",
+          "i would like to stay at ",
+          "i would like to stay in ",
+          "i want to stay at ",
+          "i want to stay in ",
+          "i'm staying at ",
+          "i'm staying in ",
+          "i am staying at ",
+          "i am staying in "
+        ]);
 
-    case "room":
+      return place && stayStructure;
 
-      return hasAny([
-        "room",
+    }
+
+
+    // ===================================================
+    // TOURIST: ROOM
+    // ===================================================
+
+    case "room": {
+
+      if (!completeEnough) return false;
+
+      const roomType = hasAny([
+        "single room",
+        "double room",
+        "twin room",
+        "family room",
+        "triple room",
+        "private room",
+        "shared room",
+        "standard room",
+        "deluxe room",
+        "connecting room",
         "suite"
       ]);
 
-
-    case "stay":
-
-      return (
+      const roomStructure =
         hasAny([
-          "stay",
-          "staying",
-          "night",
-          "nights",
-          "day",
-          "days",
-          "week",
-          "weeks"
-        ]) &&
-        hasNumberOrNumberWord(text)
-      );
+          "i'd like a ",
+          "i'd like an ",
+          "i would like a ",
+          "i would like an ",
+          "i want a ",
+          "i want an ",
+          "can i have a ",
+          "can i have an ",
+          "could i have a ",
+          "could i have an "
+        ]);
+
+      return roomType && roomStructure;
+
+    }
 
 
-    case "priceQuestion":
+    // ===================================================
+    // TOURIST: STAY
+    // ===================================================
 
-      return (
-        hasAny([
-          "how much",
-          "price",
-          "cost"
-        ]) &&
-        hasAny([
-          "total",
-          "cost",
-          "price",
-          "how much"
-        ])
-      );
+    case "stay": {
 
+      if (!completeEnough) return false;
 
-    case "confirm":
-
-      return hasAny([
-        "yes",
-        "book it",
-        "book the tour",
-        "book the trip",
-        "i'd like to book",
-        "i would like to book"
+      const duration = hasAny([
+        "day",
+        "days",
+        "night",
+        "nights",
+        "week",
+        "weeks"
       ]);
 
+      const stayStructure =
+        hasAny([
+          "i'm staying for ",
+          "i am staying for ",
+          "i'll stay for ",
+          "i will stay for ",
+          "i'd like to stay for ",
+          "i would like to stay for ",
+          "i want to stay for ",
+          "we're staying for ",
+          "we are staying for "
+        ]);
 
-    case "thanks":
+      return hasNumber && duration && stayStructure;
+
+    }
+
+
+    // ===================================================
+    // TOURIST: ASK PRICE
+    // ===================================================
+
+    case "priceQuestion": {
+
+      if (!completeEnough) return false;
+
+      return hasAny([
+        "how much is",
+        "how much does",
+        "how much will",
+        "how much would",
+        "what is the price",
+        "what's the price",
+        "what is the cost",
+        "what's the cost",
+        "how much is the room",
+        "how much is the tour",
+        "how much does it cost"
+      ]);
+
+    }
+
+
+    // ===================================================
+    // TOURIST: CONFIRM
+    // ===================================================
+
+    case "confirm": {
+
+      if (!completeEnough) return false;
+
+      return hasAny([
+        "yes please",
+        "yes i'd like to book",
+        "yes i would like to book",
+        "i'd like to book it",
+        "i would like to book it",
+        "please book it",
+        "please book the tour",
+        "i'll book it",
+        "i will book it",
+        "i'll take it",
+        "i will take it"
+      ]);
+
+    }
+
+
+    // ===================================================
+    // TOURIST: THANKS
+    // ===================================================
+
+    case "thanks": {
 
       return hasAny([
         "thank you",
-        "thanks"
+        "thanks",
+        "thank you very much",
+        "thanks a lot"
       ]);
 
+    }
 
-    case "greeting":
 
-      return (
+    // ===================================================
+    // AGENT: GREETING
+    // ===================================================
+
+    case "greeting": {
+
+      if (!completeEnough) return false;
+
+      const greeting =
         hasAny([
           "hello",
+          "hi",
           "good morning",
           "good afternoon",
-          "hi"
-        ]) &&
+          "good evening"
+        ]);
+
+      const help =
         hasAny([
-          "help",
-          "assist"
-        ])
-      );
+          "how can i help",
+          "can i help",
+          "may i help",
+          "how may i help",
+          "what can i do for you"
+        ]);
+
+      return greeting || help;
+
+    }
 
 
-    case "askDestination":
+    // ===================================================
+    // AGENT: ASK DESTINATION
+    // ===================================================
 
-      return (
-        hasAny([
-          "where",
-          "which destination",
-          "what destination"
-        ]) &&
-        hasAny([
-          "go",
-          "visit",
-          "travel",
-          "destination"
-        ])
-      );
+    case "askDestination": {
 
+      if (!completeEnough) return false;
 
-    case "askTime":
+      return hasAny([
+        "where would you like to go",
+        "where do you want to go",
+        "where are you going",
+        "what is your destination",
+        "what's your destination",
+        "which destination would you like",
+        "where would you like to travel"
+      ]);
 
-      return (
-        hasAny([
-          "when",
-          "what day",
-          "what date",
-          "what time"
-        ]) &&
-        hasAny([
-          "go",
-          "travel",
-          "leave",
-          "trip"
-        ])
-      );
+    }
 
 
-    case "askActivity":
+    // ===================================================
+    // AGENT: ASK TIME
+    // ===================================================
 
-      return (
-        hasAny([
-          "what",
-          "which"
-        ]) &&
-        hasAny([
-          "do",
-          "activity",
-          "activities",
-          "visit"
-        ])
-      );
+    case "askTime": {
 
+      if (!completeEnough) return false;
 
-    case "askAccommodation":
+      return hasAny([
+        "when would you like to go",
+        "when do you want to go",
+        "when are you going",
+        "what day would you like to go",
+        "what date would you like to go",
+        "what time would you like to go",
+        "when would you like to travel"
+      ]);
 
-      return (
-        hasAny([
-          "where",
-          "what",
-          "which"
-        ]) &&
-        hasAny([
-          "stay",
-          "accommodation",
-          "hotel",
-          "homestay"
-        ])
-      );
+    }
 
 
-    case "askRoom":
+    // ===================================================
+    // AGENT: ASK ACTIVITY
+    // ===================================================
 
-      return (
-        hasAny([
-          "what",
-          "which"
-        ]) &&
-        hasAny([
-          "room",
-          "suite"
-        ])
-      );
+    case "askActivity": {
 
+      if (!completeEnough) return false;
 
-    case "askStay":
+      return hasAny([
+        "what would you like to do",
+        "what do you want to do",
+        "what activity would you like",
+        "what activities would you like",
+        "what would you like to visit",
+        "what would you like to see"
+      ]);
 
-      return (
-        hasAny([
-          "how long",
-          "how many"
-        ]) &&
-        hasAny([
-          "stay",
-          "staying",
-          "night",
-          "nights",
-          "day",
-          "days"
-        ])
-      );
+    }
 
 
-    case "givePrice":
+    // ===================================================
+    // AGENT: ASK ACCOMMODATION
+    // ===================================================
 
-      return (
+    case "askAccommodation": {
+
+      if (!completeEnough) return false;
+
+      return hasAny([
+        "where would you like to stay",
+        "where do you want to stay",
+        "what accommodation would you like",
+        "would you like a hotel",
+        "would you like a homestay",
+        "what kind of accommodation would you like"
+      ]);
+
+    }
+
+
+    // ===================================================
+    // AGENT: ASK ROOM
+    // ===================================================
+
+    case "askRoom": {
+
+      if (!completeEnough) return false;
+
+      return hasAny([
+        "what kind of room would you like",
+        "what type of room would you like",
+        "which room would you like",
+        "would you like a single room",
+        "would you like a double room",
+        "what room would you like"
+      ]);
+
+    }
+
+
+    // ===================================================
+    // AGENT: ASK STAY
+    // ===================================================
+
+    case "askStay": {
+
+      if (!completeEnough) return false;
+
+      return hasAny([
+        "how long are you staying",
+        "how long will you stay",
+        "how long would you like to stay",
+        "how many days are you staying",
+        "how many nights are you staying",
+        "how many days would you like to stay",
+        "how many nights would you like to stay"
+      ]);
+
+    }
+
+
+    // ===================================================
+    // AGENT: GIVE PRICE
+    // ===================================================
+
+    case "givePrice": {
+
+      if (!completeEnough) return false;
+
+      const priceWord =
         hasAny([
           "dollar",
           "dollars",
+          "usd",
           "cost",
+          "costs",
           "price"
-        ]) &&
-        (
-          hasNumberOrNumberWord(text) ||
-          text.includes("forty")
-        )
-      );
+        ]) ||
+        text.includes("$");
+
+      const priceStructure =
+        hasAny([
+          "the room is ",
+          "the room costs ",
+          "the price is ",
+          "it is ",
+          "it's ",
+          "it costs ",
+          "the tour is ",
+          "the tour costs "
+        ]);
+
+      return hasNumber && priceWord && priceStructure;
+
+    }
 
 
-    case "agentConfirm":
+    // ===================================================
+    // AGENT: CONFIRM BOOKING
+    // ===================================================
+
+    case "agentConfirm": {
+
+      if (!completeEnough) return false;
 
       return hasAny([
-        "book it",
-        "book the tour",
-        "book the trip",
-        "book it for you",
-        "i can book",
-        "i'll book",
-        "i will book"
+        "i can book it",
+        "i can book the tour",
+        "i'll book it",
+        "i will book it",
+        "i'll book the tour",
+        "i will book the tour",
+        "i can book it for you",
+        "i'll book it for you",
+        "i will book it for you",
+        "your booking is confirmed",
+        "your tour is booked"
       ]);
 
+    }
 
-    case "closing":
+
+    // ===================================================
+    // AGENT: CLOSING
+    // ===================================================
+
+    case "closing": {
+
+      if (!completeEnough) return false;
 
       return hasAny([
         "you're welcome",
         "you are welcome",
         "have a nice day",
-        "have a great trip",
-        "enjoy your trip"
+        "have a good day",
+        "have a great day",
+        "enjoy your trip",
+        "enjoy the trip",
+        "have a nice trip",
+        "have a great trip"
       ]);
+
+    }
 
 
     default:
-
       return false;
-
   }
-
 }
 
 
