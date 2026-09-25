@@ -5203,20 +5203,25 @@ function showSimpleWriteRoleSelection() {
 
 function selectSimpleWriteRole(role) {
 
-  simpleWriteRole = role;
+    simpleWriteRole = role;
 
-  if (role === "tourist") {
+    if (role === "tourist") {
 
-    startSimpleWriteConversation();
+        startSimpleWriteConversation();
 
-    return;
+        return;
 
-  }
+    }
 
-  showSimpleAgentComingSoon();
+    if (role === "agent") {
+
+        startSimpleAgentWriteConversation();
+
+        return;
+
+    }
 
 }
-
 
 // ======================================================
 // TEMPORARY AGENT SCREEN
@@ -5297,6 +5302,801 @@ function showSimpleAgentComingSoon() {
         ← Choose Another Role
 
       </button>
+
+    </section>
+
+  `;
+
+}
+
+// =====================================================
+// SIMPLE WRITE - TRAVEL AGENT ROLE
+// Student = Travel Agent
+// AI = Tourist
+// =====================================================
+
+const simpleAgentWriteTasks = [
+
+  {
+    ai: "Hello. I'd like to book a tour, please.",
+    ideas: [
+      "Hello.",
+      "Hello. How can I help you?",
+      "Hello. How can I help you with your trip?"
+    ]
+  },
+
+  {
+    ai: "I'd like to go to Da Nang, Vietnam.",
+    ideas: [
+      "When?",
+      "When would you like to go?",
+      "Great. When would you like to go?"
+    ]
+  },
+
+  {
+    ai: "I'd like to go next month.",
+    ideas: [
+      "How long?",
+      "How long would you like to stay?",
+      "How long would you like to stay in Da Nang?"
+    ]
+  },
+
+  {
+    ai: "I'd like to stay for three days.",
+    ideas: [
+      "What would you like to do?",
+      "What would you like to do there?",
+      "What would you like to do in Da Nang?"
+    ]
+  },
+
+  {
+    ai: "I'd like to visit Ba Na Hills.",
+    ideas: [
+      "Where would you like to stay?",
+      "Where would you like to stay in Da Nang?",
+      "Okay. Where would you like to stay?"
+    ]
+  },
+
+  {
+    ai: "I'd like to stay at a hotel.",
+    ideas: [
+      "What room?",
+      "What kind of room would you like?",
+      "What kind of room would you like to book?"
+    ]
+  },
+
+  {
+    ai: "I'd like a double room, please.",
+    ideas: [
+      "It is $45 a night.",
+      "The room is $45 a night.",
+      "A double room is $45 a night. Is that okay?"
+    ]
+  },
+
+  {
+    ai: "Yes, that's fine.",
+    ideas: [
+      "Let me confirm.",
+      "Let me confirm your booking.",
+      "Let me confirm your booking information."
+    ]
+  },
+
+  {
+    ai: "Yes, that's correct.",
+    ideas: [
+      "I can book it for you.",
+      "Okay. I can book it for you.",
+      "Everything is correct. I can book it for you."
+    ]
+  },
+
+  {
+    ai: "Thank you very much.",
+    ideas: [
+      "You're welcome.",
+      "You're welcome. Have a nice trip!",
+      "You're welcome. Have a wonderful trip to Da Nang!"
+    ]
+  }
+
+];
+
+
+let simpleAgentWriteStep = 0;
+
+
+// =====================================================
+// START TRAVEL AGENT CONVERSATION
+// =====================================================
+
+function startSimpleAgentWriteConversation() {
+
+  simpleAgentWriteStep = 0;
+
+  showSimpleAgentWriteStep();
+
+}
+
+
+// =====================================================
+// SHOW ONE TRAVEL AGENT STEP
+// =====================================================
+
+function showSimpleAgentWriteStep() {
+
+  const task = simpleAgentWriteTasks[simpleAgentWriteStep];
+
+  if (!task) {
+
+    showSimpleAgentWriteResult();
+
+    return;
+
+  }
+
+  currentListenText = task.ai;
+
+  const progress =
+    ((simpleAgentWriteStep + 1) / simpleAgentWriteTasks.length) * 100;
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+      <div class="level">
+        ✍️ WRITE ${simpleAgentWriteStep + 1} / ${simpleAgentWriteTasks.length}
+      </div>
+
+      <div class="progress-track">
+        <div
+          class="progress-bar"
+          style="width:${progress}%">
+        </div>
+      </div>
+
+      <h2>
+        ✈️ BOOK A TOUR
+      </h2>
+
+      <div class="conversation-role-line">
+
+        <strong>YOU:</strong> 👩‍💼 Travel Agent
+
+        &nbsp; • &nbsp;
+
+        <strong>AI:</strong> 🧳 Tourist
+
+      </div>
+
+      <div class="ai-message">
+
+        <div class="speaker-label">
+          🧳 AI Tourist
+        </div>
+
+        <p>
+          ${escapeHTML(task.ai)}
+        </p>
+
+        <button
+          type="button"
+          class="listen-button"
+          id="simpleAgentListenButton">
+
+          🔊 Listen
+
+        </button>
+
+      </div>
+
+
+      <div class="write-box">
+
+        <h3>
+          ✍️ Your answer
+        </h3>
+
+        <input
+          type="text"
+          id="simpleAgentStudentAnswer"
+          placeholder="Write your own English answer..."
+          autocomplete="off"
+        >
+
+        <button
+          type="button"
+          class="check-button"
+          id="simpleAgentSendButton">
+
+          ✓ Send Answer
+
+        </button>
+
+        <button
+          type="button"
+          class="idea-button"
+          id="simpleAgentIdeaButton">
+
+          💡 Idea
+
+        </button>
+
+      </div>
+
+
+      <div
+        id="simpleAgentIdeaPanel"
+        style="display:none;">
+      </div>
+
+
+      <div id="simpleAgentFeedback"></div>
+
+
+      <div class="back-area">
+
+        <button
+          type="button"
+          class="back-button"
+          onclick="showSimpleWriteRoleSelection()">
+
+          ← Change Role
+
+        </button>
+
+      </div>
+
+    </section>
+
+  `;
+
+
+  document
+    .getElementById("simpleAgentListenButton")
+    .addEventListener("click", function () {
+
+      currentListenText = task.ai;
+
+      listenAgain();
+
+    });
+
+
+  document
+    .getElementById("simpleAgentIdeaButton")
+    .addEventListener("click", function () {
+
+      showSimpleAgentIdeas();
+
+    });
+
+
+  document
+    .getElementById("simpleAgentSendButton")
+    .addEventListener("click", function () {
+
+      checkSimpleAgentWriteAnswer();
+
+    });
+
+
+  const input =
+    document.getElementById("simpleAgentStudentAnswer");
+
+  input.addEventListener("keydown", function (event) {
+
+    if (event.key === "Enter") {
+
+      checkSimpleAgentWriteAnswer();
+
+    }
+
+  });
+
+
+  input.focus();
+
+  speakText(task.ai);
+
+}
+
+
+// =====================================================
+// IDEA
+// =====================================================
+
+function showSimpleAgentIdeas() {
+
+  const task = simpleAgentWriteTasks[simpleAgentWriteStep];
+
+  const panel =
+    document.getElementById("simpleAgentIdeaPanel");
+
+  if (!task || !panel) return;
+
+  panel.style.display = "block";
+
+  panel.innerHTML = `
+
+    <div class="idea-panel">
+
+      <h3>
+        💡 Ideas
+      </h3>
+
+      <p>
+        <strong>Idea 1:</strong>
+        ${escapeHTML(task.ideas[0])}
+      </p>
+
+      <p>
+        <strong>Idea 2:</strong>
+        ${escapeHTML(task.ideas[1])}
+      </p>
+
+      <p>
+        <strong>Idea 3:</strong>
+        ${escapeHTML(task.ideas[2])}
+      </p>
+
+    </div>
+
+  `;
+
+}
+
+
+// =====================================================
+// CHECK TRAVEL AGENT ANSWER
+// =====================================================
+
+function checkSimpleAgentWriteAnswer() {
+
+  const input =
+    document.getElementById("simpleAgentStudentAnswer");
+
+  if (!input) return;
+
+  const studentText = input.value.trim();
+
+  if (!studentText) {
+
+    showSimpleAgentRepeat(
+      "Please write an answer first."
+    );
+
+    return;
+
+  }
+
+
+  const task = simpleAgentWriteTasks[simpleAgentWriteStep];
+
+  const result =
+    evaluateSimpleAgentAnswer(
+      studentText,
+      simpleAgentWriteStep
+    );
+
+
+  if (!result.correct) {
+
+    showSimpleAgentRepeat(
+      "Check your English and try again."
+    );
+
+    return;
+
+  }
+
+
+  input.disabled = true;
+
+  const sendButton =
+    document.getElementById("simpleAgentSendButton");
+
+  if (sendButton) {
+
+    sendButton.disabled = true;
+
+  }
+
+
+  const feedback =
+    document.getElementById("simpleAgentFeedback");
+
+
+  if (result.level === "excellent") {
+
+    feedback.innerHTML = `
+
+      <div class="success-feedback">
+
+        <h3>
+          🌟 Excellent!
+        </h3>
+
+        <p>
+          <strong>You:</strong>
+          ${escapeHTML(studentText)}
+        </p>
+
+        <p class="model-answer">
+          Natural answer:
+          ${escapeHTML(task.ideas[2])}
+        </p>
+
+        <button
+          type="button"
+          class="continue-button"
+          onclick="nextSimpleAgentWriteStep()">
+
+          Continue ➜
+
+        </button>
+
+      </div>
+
+    `;
+
+    if (typeof playExcellentFeedback === "function") {
+
+      playExcellentFeedback();
+
+    } else {
+
+      speakText("Excellent!");
+
+    }
+
+  } else {
+
+    feedback.innerHTML = `
+
+      <div class="success-feedback">
+
+        <h3>
+          👍 Good!
+        </h3>
+
+        <p>
+          <strong>You:</strong>
+          ${escapeHTML(studentText)}
+        </p>
+
+        <p class="model-answer">
+          Try a full sentence:
+          ${escapeHTML(task.ideas[2])}
+        </p>
+
+        <button
+          type="button"
+          class="continue-button"
+          onclick="nextSimpleAgentWriteStep()">
+
+          Continue ➜
+
+        </button>
+
+      </div>
+
+    `;
+
+    if (typeof playGoodFeedback === "function") {
+
+      playGoodFeedback();
+
+    } else {
+
+      speakText("Good!");
+
+    }
+
+  }
+
+}
+
+
+// =====================================================
+// FLEXIBLE RULE-BASED CHECKER
+// =====================================================
+
+function evaluateSimpleAgentAnswer(answer, step) {
+
+  const text = normalizeText(answer);
+
+  if (!text) {
+
+    return {
+      correct: false,
+      level: "repeat"
+    };
+
+  }
+
+
+  let correct = false;
+
+
+  switch (step) {
+
+    case 0:
+
+      correct =
+        text.includes("help") ||
+        text.includes("hello") ||
+        text.includes("hi");
+
+      break;
+
+
+    case 1:
+
+      correct =
+        text.includes("when") ||
+        text.includes("what date");
+
+      break;
+
+
+    case 2:
+
+      correct =
+        text.includes("how long") ||
+        text.includes("how many days") ||
+        text.includes("how many nights");
+
+      break;
+
+
+    case 3:
+
+      correct =
+        text.includes("what") &&
+        (
+          text.includes("do") ||
+          text.includes("visit") ||
+          text.includes("activity")
+        );
+
+      break;
+
+
+    case 4:
+
+      correct =
+        text.includes("where") &&
+        (
+          text.includes("stay") ||
+          text.includes("hotel") ||
+          text.includes("accommodation")
+        );
+
+      break;
+
+
+    case 5:
+
+      correct =
+        text.includes("room");
+
+      break;
+
+
+    case 6:
+
+      correct =
+        (
+          text.includes("$") ||
+          text.includes("dollar") ||
+          text.includes("45")
+        ) &&
+        (
+          text.includes("night") ||
+          text.includes("room") ||
+          text.includes("cost") ||
+          text.includes("price")
+        );
+
+      break;
+
+
+    case 7:
+
+      correct =
+        text.includes("confirm") ||
+        text.includes("booking") ||
+        text.includes("information") ||
+        text.includes("details");
+
+      break;
+
+
+    case 8:
+
+      correct =
+        text.includes("book") ||
+        text.includes("booking") ||
+        text.includes("reserve");
+
+      break;
+
+
+    case 9:
+
+      correct =
+        text.includes("welcome") ||
+        text.includes("nice trip") ||
+        text.includes("good trip") ||
+        text.includes("wonderful trip");
+
+      break;
+
+  }
+
+
+  if (!correct) {
+
+    return {
+      correct: false,
+      level: "repeat"
+    };
+
+  }
+
+
+  const wordCount =
+    text.split(/\s+/).filter(Boolean).length;
+
+
+  return {
+
+    correct: true,
+
+    level:
+      wordCount >= 5
+        ? "excellent"
+        : "good"
+
+  };
+
+}
+
+
+// =====================================================
+// REPEAT
+// =====================================================
+
+function showSimpleAgentRepeat(message) {
+
+  const feedback =
+    document.getElementById("simpleAgentFeedback");
+
+  if (!feedback) return;
+
+  feedback.innerHTML = `
+
+    <div class="repeat-feedback">
+
+      <h3>
+        🔄 Repeat, please.
+      </h3>
+
+      <p>
+        ${escapeHTML(message)}
+      </p>
+
+      <p>
+        You can press <strong>Idea</strong> for help.
+      </p>
+
+    </div>
+
+  `;
+
+
+  if (typeof playRepeatFeedback === "function") {
+
+    playRepeatFeedback();
+
+  } else {
+
+    speakText("Repeat, please.");
+
+  }
+
+}
+
+
+// =====================================================
+// NEXT STEP
+// =====================================================
+
+function nextSimpleAgentWriteStep() {
+
+  simpleAgentWriteStep++;
+
+  if (
+    simpleAgentWriteStep >=
+    simpleAgentWriteTasks.length
+  ) {
+
+    showSimpleAgentWriteResult();
+
+    return;
+
+  }
+
+  showSimpleAgentWriteStep();
+
+}
+
+
+// =====================================================
+// FINISH
+// =====================================================
+
+function showSimpleAgentWriteResult() {
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+      <div class="level">
+        ✍️ WRITE
+      </div>
+
+      <h2>
+        🎉 Conversation Complete!
+      </h2>
+
+      <div class="success-feedback">
+
+        <h3>
+          Great work!
+        </h3>
+
+        <p>
+          You completed all 10 steps as the
+          <strong>Travel Agent</strong>.
+        </p>
+
+        <p>
+          AI was the <strong>Tourist</strong>.
+        </p>
+
+      </div>
+
+
+      <div class="result-buttons">
+
+        <button
+          type="button"
+          class="continue-button"
+          onclick="startSimpleAgentWriteConversation()">
+
+          🔄 Practice Again
+
+        </button>
+
+        <button
+          type="button"
+          class="back-button"
+          onclick="showSimpleWriteRoleSelection()">
+
+          👤 Change Role
+
+        </button>
+
+      </div>
 
     </section>
 
