@@ -202,33 +202,7 @@ function openBookTour() {
       </h3>
 
 
-      <div class="activity-card">
-
-        <div class="activity-icon">
-          👆
-        </div>
-
-        <div class="activity-info">
-
-          <h3>
-            CHOOSE
-          </h3>
-
-          <p>
-            Choose the best answer
-            in the conversation.
-          </p>
-
-          <button
-            onclick="showChooseComingSoon()">
-
-            Start Choose
-
-          </button>
-
-        </div>
-
-      </div>
+     
 
 
       <div class="activity-card">
