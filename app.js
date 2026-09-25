@@ -4087,6 +4087,8 @@ function showSpeakComingSoon() {
 
 function startSimpleWrite() {
 
+  currentListenText = "";
+
   document.querySelector("main").innerHTML = `
 
     <section class="lesson-card">
@@ -4110,49 +4112,8 @@ function startSimpleWrite() {
         </p>
 
         <p>
-          You will have a 10-step conversation
-          with an AI Travel Agent.
+          You will have a 10-step conversation.
         </p>
-
-      </div>
-
-      <div class="role-status">
-
-        <div class="role-status-box">
-
-          <span>
-            🧳
-          </span>
-
-          <small>
-            YOU
-          </small>
-
-          <strong>
-            Tourist
-          </strong>
-
-        </div>
-
-        <div class="role-switch">
-          ↔
-        </div>
-
-        <div class="role-status-box">
-
-          <span>
-            👩‍💼
-          </span>
-
-          <small>
-            AI
-          </small>
-
-          <strong>
-            Travel Agent
-          </strong>
-
-        </div>
 
       </div>
 
@@ -4170,21 +4131,19 @@ function startSimpleWrite() {
       </div>
 
       <button
+        type="button"
         class="continue-button"
-        onclick="showSimpleWriteRoleSelection()"
-
+        id="simpleWriteStartButton">
         Start Conversation ➜
-
       </button>
 
       <div class="back-area">
 
         <button
+          type="button"
           class="back-button"
           onclick="openBookTour()">
-
           ← Back to BOOK A TOUR
-
         </button>
 
       </div>
@@ -4192,6 +4151,14 @@ function startSimpleWrite() {
     </section>
 
   `;
+
+
+  document
+    .getElementById("simpleWriteStartButton")
+    .addEventListener(
+      "click",
+      showSimpleWriteRoleSelection
+    );
 
 }
 
