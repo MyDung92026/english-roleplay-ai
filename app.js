@@ -4039,9 +4039,7 @@ function showChooseComingSoon() {
 
 function showSpeakComingSoon() {
 
-  document.querySelector(
-    "main"
-  ).innerHTML = `
+  document.querySelector("main").innerHTML = `
 
     <section class="lesson-card">
 
@@ -4050,36 +4048,274 @@ function showSpeakComingSoon() {
       </div>
 
       <h2>
-        Speak Practice
+        ✈️ BOOK A TOUR
       </h2>
 
       <div class="mission">
 
         <h3>
-          Coming Soon
+          👤 Choose Your Role
         </h3>
 
         <p>
-          Microphone practice will be added
-          after WRITE and CHOOSE.
+          Choose a role for the speaking conversation.
         </p>
 
       </div>
 
-      <button
-        class="back-button"
-        onclick="openBookTour()">
+      <div class="role-choice-container">
 
-        ← Back to BOOK A TOUR
+        <div class="role-choice-card">
 
-      </button>
+          <div class="role-big-icon">
+            🧳
+          </div>
+
+          <h3>
+            Tourist
+          </h3>
+
+          <p>
+            You are the Tourist.
+          </p>
+
+          <p>
+            AI will be the Travel Agent.
+          </p>
+
+          <button
+            class="continue-button"
+            onclick="selectSpeakRole('tourist')">
+
+            Choose Tourist
+
+          </button>
+
+        </div>
+
+
+        <div class="role-choice-card">
+
+          <div class="role-big-icon">
+            👩‍💼
+          </div>
+
+          <h3>
+            Travel Agent
+          </h3>
+
+          <p>
+            You are the Travel Agent.
+          </p>
+
+          <p>
+            AI will be the Tourist.
+          </p>
+
+          <button
+            class="continue-button"
+            onclick="selectSpeakRole('agent')">
+
+            Choose Travel Agent
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="idea-panel">
+
+        <strong>
+          🎯 Speaking Rules
+        </strong>
+
+        <p>
+          Speak in a complete English sentence.
+        </p>
+
+        <p>
+          No Idea used + correct answer = <strong>1 point</strong>.
+        </p>
+
+        <p>
+          Idea used + correct answer = <strong>0.5 point</strong>.
+        </p>
+
+      </div>
+
+
+      <div class="back-area">
+
+        <button
+          class="back-button"
+          onclick="openBookTour()">
+
+          ← Back to BOOK A TOUR
+
+        </button>
+
+      </div>
 
     </section>
 
   `;
+
+}
+
+// ================================================
+// SPEAK - ROLE SELECTION
+// ================================================
+
+let speakRole = "tourist";
+
+function selectSpeakRole(role) {
+
+  speakRole = role;
+
+  if (role === "tourist") {
+
+    showSpeakReadyScreen(
+      "🧳",
+      "Tourist",
+      "👩‍💼",
+      "Travel Agent"
+    );
+
+    return;
+  }
+
+  showSpeakReadyScreen(
+    "👩‍💼",
+    "Travel Agent",
+    "🧳",
+    "Tourist"
+  );
 }
 
 
+function showSpeakReadyScreen(
+  studentIcon,
+  studentRole,
+  aiIcon,
+  aiRole
+) {
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+      <div class="level">
+        🎤 SPEAK
+      </div>
+
+      <h2>
+        ✈️ BOOK A TOUR
+      </h2>
+
+      <div class="mission">
+
+        <h3>
+          🎤 Ready to Speak
+        </h3>
+
+        <p>
+          Speak in a complete English sentence.
+        </p>
+
+      </div>
+
+      <div class="role-status">
+
+        <div class="role-status-box">
+
+          <span>
+            ${studentIcon}
+          </span>
+
+          <small>
+            YOU
+          </small>
+
+          <strong>
+            ${studentRole}
+          </strong>
+
+        </div>
+
+        <div class="role-switch">
+          ↔
+        </div>
+
+        <div class="role-status-box">
+
+          <span>
+            ${aiIcon}
+          </span>
+
+          <small>
+            AI
+          </small>
+
+          <strong>
+            ${aiRole}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="idea-panel">
+
+        <strong>
+          🎯 Scoring
+        </strong>
+
+        <p>
+          Speak correctly without Idea:
+          <strong>+1 point</strong>
+        </p>
+
+        <p>
+          Speak correctly after viewing Idea:
+          <strong>+0.5 point</strong>
+        </p>
+
+        <p>
+          You must speak a complete English sentence.
+        </p>
+
+      </div>
+
+
+      <button
+        class="continue-button"
+        onclick="startSpeakConversation()">
+
+        🎤 Start Speaking
+
+      </button>
+
+
+      <div class="back-area">
+
+        <button
+          class="back-button"
+          onclick="showSpeakComingSoon()">
+
+          ← Change Role
+
+        </button>
+
+      </div>
+
+    </section>
+
+  `;
+
+}
 
 // ======================================================
 // SIMPLE WRITE - BOOK A TOUR
@@ -6101,5 +6337,1563 @@ function showSimpleAgentWriteResult() {
     </section>
 
   `;
+
+}
+
+
+
+// ============================================================
+// SPEAK ENGINE - BOOK A TOUR
+// 10 student speaking turns
+// No Idea + correct = 1 point
+// Idea viewed + correct = 0.5 point
+// ============================================================
+
+let speakStep = 0;
+let speakScore = 0;
+let speakIdeaUsed = false;
+let speakRecognition = null;
+let speakListening = false;
+let speakTranscript = "";
+let speakScoredSteps = {};
+let speakCurrentRole = "tourist";
+
+
+// ============================================================
+// SPEAK TASKS
+// ============================================================
+
+function getSpeakTouristTasks() {
+
+  return [
+
+    {
+      ai: "Hello. How can I help you?",
+      task: "Ask to book a tour.",
+      ideas: [
+        "I'd like to book a tour, please.",
+        "I would like to book a trip, please."
+      ],
+      type: "book"
+    },
+
+    {
+      ai: "Sure. Where would you like to go?",
+      task: "Say where you would like to go.",
+      ideas: [
+        "I'd like to go to Da Nang.",
+        "I would like to visit Da Nang."
+      ],
+      type: "destination"
+    },
+
+    {
+      ai: "When would you like to go?",
+      task: "Say when you would like to go.",
+      ideas: [
+        "I'd like to go next week.",
+        "I would like to go this weekend."
+      ],
+      type: "time"
+    },
+
+    {
+      ai: "What would you like to do there?",
+      task: "Say what you would like to do.",
+      ideas: [
+        "I'd like to visit Ba Na Hills.",
+        "I would like to go sightseeing."
+      ],
+      type: "activity"
+    },
+
+    {
+      ai: "Where would you like to stay?",
+      task: "Say where you would like to stay.",
+      ideas: [
+        "I'd like to stay at a hotel.",
+        "I would like to stay at a homestay."
+      ],
+      type: "accommodation"
+    },
+
+    {
+      ai: "What kind of room would you like?",
+      task: "Say what kind of room you would like.",
+      ideas: [
+        "I'd like a double room, please.",
+        "I would like a single room, please."
+      ],
+      type: "room"
+    },
+
+    {
+      ai: "How long are you staying?",
+      task: "Say how long you are staying.",
+      ideas: [
+        "I'm staying for three days.",
+        "I will stay for four nights."
+      ],
+      type: "stay"
+    },
+
+    {
+      ai: "The room is forty-five dollars a night.",
+      task: "Ask about the total price.",
+      ideas: [
+        "How much is it in total?",
+        "How much does the room cost in total?"
+      ],
+      type: "priceQuestion"
+    },
+
+    {
+      ai: "Would you like me to book it for you?",
+      task: "Confirm the booking.",
+      ideas: [
+        "Yes, please book it for me.",
+        "Yes, I'd like to book it, please."
+      ],
+      type: "confirm"
+    },
+
+    {
+      ai: "Your tour is booked. Have a great trip!",
+      task: "Thank the travel agent politely.",
+      ideas: [
+        "Thank you very much for your help.",
+        "Thank you. Have a nice day."
+      ],
+      type: "thanks"
+    }
+
+  ];
+
+}
+
+
+// ============================================================
+// TRAVEL AGENT TASKS
+// ============================================================
+
+function getSpeakAgentTasks() {
+
+  return [
+
+    {
+      ai: "Hello. I'd like to book a tour, please.",
+      task: "Greet the tourist and offer help.",
+      ideas: [
+        "Hello. How can I help you?",
+        "Good morning. How may I help you?"
+      ],
+      type: "greeting"
+    },
+
+    {
+      ai: "I'd like to take a trip.",
+      task: "Ask where the tourist would like to go.",
+      ideas: [
+        "Where would you like to go?",
+        "Which destination would you like to visit?"
+      ],
+      type: "askDestination"
+    },
+
+    {
+      ai: "I'd like to go to Da Nang.",
+      task: "Ask when the tourist would like to go.",
+      ideas: [
+        "When would you like to go?",
+        "When would you like to travel?"
+      ],
+      type: "askTime"
+    },
+
+    {
+      ai: "I'd like to go next week.",
+      task: "Ask what the tourist would like to do.",
+      ideas: [
+        "What would you like to do there?",
+        "What activities would you like to do?"
+      ],
+      type: "askActivity"
+    },
+
+    {
+      ai: "I'd like to go sightseeing.",
+      task: "Ask where the tourist would like to stay.",
+      ideas: [
+        "Where would you like to stay?",
+        "What kind of accommodation would you like?"
+      ],
+      type: "askAccommodation"
+    },
+
+    {
+      ai: "I'd like to stay at a hotel.",
+      task: "Ask what kind of room the tourist wants.",
+      ideas: [
+        "What kind of room would you like?",
+        "Which type of room would you prefer?"
+      ],
+      type: "askRoom"
+    },
+
+    {
+      ai: "I'd like a double room.",
+      task: "Ask how long the tourist will stay.",
+      ideas: [
+        "How long are you staying?",
+        "How many nights would you like to stay?"
+      ],
+      type: "askStay"
+    },
+
+    {
+      ai: "I'm staying for three nights.",
+      task: "Tell the tourist the room price.",
+      ideas: [
+        "The room is forty-five dollars a night.",
+        "It costs forty-five dollars per night."
+      ],
+      type: "givePrice"
+    },
+
+    {
+      ai: "That sounds good. I'd like to book it.",
+      task: "Confirm the booking.",
+      ideas: [
+        "Certainly. I can book it for you.",
+        "Of course. I'll book the tour for you."
+      ],
+      type: "agentConfirm"
+    },
+
+    {
+      ai: "Thank you very much.",
+      task: "End the conversation politely.",
+      ideas: [
+        "You're welcome. Have a great trip!",
+        "You're welcome. Have a nice day!"
+      ],
+      type: "closing"
+    }
+
+  ];
+
+}
+
+
+// ============================================================
+// GET CURRENT SPEAK TASKS
+// ============================================================
+
+function getCurrentSpeakTasks() {
+
+  if (speakCurrentRole === "agent") {
+    return getSpeakAgentTasks();
+  }
+
+  return getSpeakTouristTasks();
+
+}
+
+
+// ============================================================
+// START SPEAK CONVERSATION
+// ============================================================
+
+function startSpeakConversation() {
+
+  speakStep = 0;
+  speakScore = 0;
+  speakIdeaUsed = false;
+  speakTranscript = "";
+  speakScoredSteps = {};
+
+  if (
+    typeof simpleSpeakRole !== "undefined" &&
+    simpleSpeakRole === "agent"
+  ) {
+    speakCurrentRole = "agent";
+  } else {
+    speakCurrentRole = "tourist";
+  }
+
+  showSpeakStep();
+
+}
+
+
+// ============================================================
+// SHOW EACH SPEAK STEP
+// ============================================================
+
+function showSpeakStep() {
+
+  const tasks = getCurrentSpeakTasks();
+
+  if (speakStep >= tasks.length) {
+    showSpeakResult();
+    return;
+  }
+
+  const task = tasks[speakStep];
+
+  speakIdeaUsed = false;
+  speakTranscript = "";
+
+  const studentRole =
+    speakCurrentRole === "agent"
+      ? "Travel Agent"
+      : "Tourist";
+
+  const aiRole =
+    speakCurrentRole === "agent"
+      ? "Tourist"
+      : "Travel Agent";
+
+  const studentIcon =
+    speakCurrentRole === "agent"
+      ? "👩‍💼"
+      : "🧳";
+
+  const aiIcon =
+    speakCurrentRole === "agent"
+      ? "🧳"
+      : "👩‍💼";
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+      <div class="level">
+        🎤 SPEAK ${speakStep + 1} / ${tasks.length}
+      </div>
+
+      <div class="progress-track">
+        <div
+          class="progress-bar"
+          style="width:${((speakStep + 1) / tasks.length) * 100}%">
+        </div>
+      </div>
+
+      <h2>
+        ✈️ BOOK A TOUR
+      </h2>
+
+      <div class="conversation-role-line">
+        <strong>YOU:</strong>
+        ${studentIcon} ${studentRole}
+
+        &nbsp; • &nbsp;
+
+        <strong>AI:</strong>
+        ${aiIcon} ${aiRole}
+      </div>
+
+      <div class="ai-message">
+
+        <div class="speaker-label">
+          ${aiIcon} AI ${aiRole}
+        </div>
+
+        <p>
+          ${escapeSpeakHTML(task.ai)}
+        </p>
+
+        <button
+          type="button"
+          class="listen-button"
+          onclick="speakListenAgain()">
+
+          🔊 Listen
+
+        </button>
+
+      </div>
+
+      <div class="write-box">
+
+        <h3>
+          🎤 Your turn
+        </h3>
+
+        <p>
+          <strong>${escapeSpeakHTML(task.task)}</strong>
+        </p>
+
+        <p>
+          Speak one complete English sentence.
+        </p>
+
+        <button
+          type="button"
+          class="check-button"
+          id="speakButton"
+          onclick="startStudentSpeech()">
+
+          🎤 Speak
+
+        </button>
+
+        <button
+          type="button"
+          class="idea-button"
+          onclick="showSpeakIdeas()">
+
+          💡 Idea
+
+        </button>
+
+        <div
+          id="speakStatus"
+          style="margin-top:15px;">
+        </div>
+
+      </div>
+
+      <div id="speakIdeaArea"></div>
+
+      <div id="speakFeedback"></div>
+
+      <div class="back-area">
+
+        <button
+          type="button"
+          class="back-button"
+          onclick="showSpeakComingSoon()">
+
+          ← Change Role
+
+        </button>
+
+      </div>
+
+    </section>
+
+  `;
+
+  currentListenText = task.ai;
+
+  window.setTimeout(function () {
+    speakText(task.ai);
+  }, 300);
+
+}
+
+
+// ============================================================
+// LISTEN AGAIN
+// ============================================================
+
+function speakListenAgain() {
+
+  const tasks = getCurrentSpeakTasks();
+
+  if (!tasks[speakStep]) return;
+
+  const text = tasks[speakStep].ai;
+
+  currentListenText = text;
+
+  // Keep the same reliable TTS mechanism already used in WRITE.
+  listenAgain();
+
+}
+
+
+// ============================================================
+// SHOW EXACTLY TWO COMPLETE-SENTENCE IDEAS
+// ============================================================
+
+function showSpeakIdeas() {
+
+  const tasks = getCurrentSpeakTasks();
+
+  const task = tasks[speakStep];
+
+  if (!task) return;
+
+  speakIdeaUsed = true;
+
+  const area =
+    document.getElementById("speakIdeaArea");
+
+  if (!area) return;
+
+  area.innerHTML = `
+
+    <div class="idea-panel">
+
+      <strong>
+        💡 Ideas
+      </strong>
+
+      <p>
+        <strong>Idea 1:</strong>
+        ${escapeSpeakHTML(task.ideas[0])}
+      </p>
+
+      <p>
+        <strong>Idea 2:</strong>
+        ${escapeSpeakHTML(task.ideas[1])}
+      </p>
+
+      <p>
+        <small>
+          These are examples. Speak one complete sentence.
+          A correct answer after viewing Idea earns 0.5 point.
+        </small>
+      </p>
+
+    </div>
+
+  `;
+
+}
+
+
+// ============================================================
+// START MICROPHONE
+// ============================================================
+
+function startStudentSpeech() {
+
+  if (speakListening) return;
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  const status =
+    document.getElementById("speakStatus");
+
+  if (!SpeechRecognition) {
+
+    if (status) {
+      status.innerHTML = `
+        <div class="repeat-feedback">
+          Speech recognition is not supported in this browser.
+          Please use a current version of Chrome or Edge.
+        </div>
+      `;
+    }
+
+    return;
+  }
+
+  try {
+
+    if (speakRecognition) {
+      speakRecognition.abort();
+    }
+
+  } catch (error) {
+    // Ignore old recognition session errors.
+  }
+
+  speakRecognition =
+    new SpeechRecognition();
+
+  speakRecognition.lang = "en-US";
+
+  speakRecognition.interimResults = false;
+
+  speakRecognition.continuous = false;
+
+  speakRecognition.maxAlternatives = 3;
+
+
+  speakRecognition.onstart = function () {
+
+    speakListening = true;
+
+    const button =
+      document.getElementById("speakButton");
+
+    if (button) {
+      button.disabled = true;
+      button.textContent = "🎤 Listening...";
+    }
+
+    if (status) {
+      status.innerHTML =
+        "<strong>🎤 Listening... Speak now.</strong>";
+    }
+
+  };
+
+
+  speakRecognition.onresult = function (event) {
+
+    let bestTranscript = "";
+
+    if (
+      event.results &&
+      event.results[0] &&
+      event.results[0][0]
+    ) {
+
+      bestTranscript =
+        event.results[0][0].transcript || "";
+
+    }
+
+    speakTranscript =
+      String(bestTranscript).trim();
+
+    if (status) {
+
+      status.innerHTML = `
+        <div class="student-response">
+          <strong>I heard:</strong>
+          ${escapeSpeakHTML(speakTranscript)}
+        </div>
+      `;
+
+    }
+
+    checkSpokenAnswer(speakTranscript);
+
+  };
+
+
+  speakRecognition.onerror = function (event) {
+
+    speakListening = false;
+
+    const button =
+      document.getElementById("speakButton");
+
+    if (button) {
+      button.disabled = false;
+      button.textContent = "🎤 Speak";
+    }
+
+    if (!status) return;
+
+    if (event.error === "not-allowed") {
+
+      status.innerHTML = `
+        <div class="repeat-feedback">
+          Microphone permission is blocked.
+          Please allow microphone access and try again.
+        </div>
+      `;
+
+      return;
+    }
+
+    if (event.error === "no-speech") {
+
+      status.innerHTML = `
+        <div class="repeat-feedback">
+          I did not hear your answer. Please try again.
+        </div>
+      `;
+
+      return;
+    }
+
+    status.innerHTML = `
+      <div class="repeat-feedback">
+        I could not hear the sentence clearly.
+        Please try again.
+      </div>
+    `;
+
+  };
+
+
+  speakRecognition.onend = function () {
+
+    speakListening = false;
+
+    const button =
+      document.getElementById("speakButton");
+
+    if (button && !speakScoredSteps[speakStep]) {
+      button.disabled = false;
+      button.textContent = "🎤 Speak";
+    }
+
+  };
+
+
+  try {
+
+    speakRecognition.start();
+
+  } catch (error) {
+
+    speakListening = false;
+
+    if (status) {
+      status.innerHTML = `
+        <div class="repeat-feedback">
+          Please wait a moment and press Speak again.
+        </div>
+      `;
+    }
+
+  }
+
+}
+
+
+// ============================================================
+// CHECK SPOKEN ANSWER
+// ============================================================
+
+function checkSpokenAnswer(answer) {
+
+  const tasks = getCurrentSpeakTasks();
+
+  const task = tasks[speakStep];
+
+  if (!task) return;
+
+  if (speakScoredSteps[speakStep]) return;
+
+  const text =
+    normalizeSpeakText(answer);
+
+  const complete =
+    isCompleteSpokenSentence(text);
+
+  const correct =
+    complete &&
+    isSpeakAnswerRelevant(text, task.type);
+
+  if (!correct) {
+
+    showSpeakRepeat(answer);
+
+    return;
+  }
+
+  const points =
+    speakIdeaUsed ? 0.5 : 1;
+
+  speakScore += points;
+
+  speakScoredSteps[speakStep] = true;
+
+  showSpeakSuccess(
+    answer,
+    points
+  );
+
+}
+
+
+// ============================================================
+// COMPLETE SENTENCE CHECK
+// ============================================================
+
+function isCompleteSpokenSentence(text) {
+
+  if (!text) return false;
+
+  const words =
+    text
+      .split(/\s+/)
+      .filter(Boolean);
+
+  if (words.length < 3) {
+    return false;
+  }
+
+  const sentenceSignals = [
+
+    "i ",
+    "i'd ",
+    "i would ",
+    "i'm ",
+    "i am ",
+    "i will ",
+    "i can ",
+
+    "where ",
+    "when ",
+    "what ",
+    "which ",
+    "how ",
+
+    "would ",
+    "could ",
+    "can ",
+    "may ",
+
+    "the ",
+    "it ",
+    "that ",
+    "this ",
+
+    "hello ",
+    "good morning",
+    "good afternoon",
+
+    "thank ",
+    "you're welcome",
+    "you are welcome",
+
+    "certainly",
+    "of course"
+
+  ];
+
+  return sentenceSignals.some(function (signal) {
+
+    return (
+      text === signal.trim() ||
+      text.startsWith(signal) ||
+      text.includes(" " + signal.trim() + " ")
+    );
+
+  });
+
+}
+
+
+// ============================================================
+// RELEVANCE CHECK
+// Flexible A1 rule-based checking
+// ============================================================
+
+function isSpeakAnswerRelevant(text, type) {
+
+  const hasAny = function (items) {
+
+    return items.some(function (item) {
+      return text.includes(item);
+    });
+
+  };
+
+
+  switch (type) {
+
+    case "book":
+
+      return hasAny([
+        "book a tour",
+        "book a trip",
+        "book the tour",
+        "book the trip",
+        "take a tour",
+        "take a trip"
+      ]);
+
+
+    case "destination":
+
+      return hasAny([
+        "go to",
+        "travel to",
+        "visit",
+        "trip to",
+        "tour to"
+      ]);
+
+
+    case "time":
+
+      return hasAny([
+        "next ",
+        "this ",
+        "tomorrow",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+        "week",
+        "weekend",
+        "month",
+        "morning",
+        "afternoon",
+        "evening"
+      ]);
+
+
+    case "activity":
+
+      return hasAny([
+        "visit ",
+        "go ",
+        "see ",
+        "swim",
+        "sightseeing",
+        "shopping",
+        "explore",
+        "try ",
+        "eat ",
+        "relax"
+      ]);
+
+
+    case "accommodation":
+
+      return hasAny([
+        "stay at",
+        "stay in",
+        "hotel",
+        "homestay",
+        "hostel",
+        "resort",
+        "guesthouse",
+        "guest house",
+        "apartment",
+        "villa",
+        "motel"
+      ]);
+
+
+    case "room":
+
+      return hasAny([
+        "room",
+        "suite"
+      ]);
+
+
+    case "stay":
+
+      return (
+        hasAny([
+          "stay",
+          "staying",
+          "night",
+          "nights",
+          "day",
+          "days",
+          "week",
+          "weeks"
+        ]) &&
+        hasNumberOrNumberWord(text)
+      );
+
+
+    case "priceQuestion":
+
+      return (
+        hasAny([
+          "how much",
+          "price",
+          "cost"
+        ]) &&
+        hasAny([
+          "total",
+          "cost",
+          "price",
+          "how much"
+        ])
+      );
+
+
+    case "confirm":
+
+      return hasAny([
+        "yes",
+        "book it",
+        "book the tour",
+        "book the trip",
+        "i'd like to book",
+        "i would like to book"
+      ]);
+
+
+    case "thanks":
+
+      return hasAny([
+        "thank you",
+        "thanks"
+      ]);
+
+
+    case "greeting":
+
+      return (
+        hasAny([
+          "hello",
+          "good morning",
+          "good afternoon",
+          "hi"
+        ]) &&
+        hasAny([
+          "help",
+          "assist"
+        ])
+      );
+
+
+    case "askDestination":
+
+      return (
+        hasAny([
+          "where",
+          "which destination",
+          "what destination"
+        ]) &&
+        hasAny([
+          "go",
+          "visit",
+          "travel",
+          "destination"
+        ])
+      );
+
+
+    case "askTime":
+
+      return (
+        hasAny([
+          "when",
+          "what day",
+          "what date",
+          "what time"
+        ]) &&
+        hasAny([
+          "go",
+          "travel",
+          "leave",
+          "trip"
+        ])
+      );
+
+
+    case "askActivity":
+
+      return (
+        hasAny([
+          "what",
+          "which"
+        ]) &&
+        hasAny([
+          "do",
+          "activity",
+          "activities",
+          "visit"
+        ])
+      );
+
+
+    case "askAccommodation":
+
+      return (
+        hasAny([
+          "where",
+          "what",
+          "which"
+        ]) &&
+        hasAny([
+          "stay",
+          "accommodation",
+          "hotel",
+          "homestay"
+        ])
+      );
+
+
+    case "askRoom":
+
+      return (
+        hasAny([
+          "what",
+          "which"
+        ]) &&
+        hasAny([
+          "room",
+          "suite"
+        ])
+      );
+
+
+    case "askStay":
+
+      return (
+        hasAny([
+          "how long",
+          "how many"
+        ]) &&
+        hasAny([
+          "stay",
+          "staying",
+          "night",
+          "nights",
+          "day",
+          "days"
+        ])
+      );
+
+
+    case "givePrice":
+
+      return (
+        hasAny([
+          "dollar",
+          "dollars",
+          "cost",
+          "price"
+        ]) &&
+        (
+          hasNumberOrNumberWord(text) ||
+          text.includes("forty")
+        )
+      );
+
+
+    case "agentConfirm":
+
+      return hasAny([
+        "book it",
+        "book the tour",
+        "book the trip",
+        "book it for you",
+        "i can book",
+        "i'll book",
+        "i will book"
+      ]);
+
+
+    case "closing":
+
+      return hasAny([
+        "you're welcome",
+        "you are welcome",
+        "have a nice day",
+        "have a great trip",
+        "enjoy your trip"
+      ]);
+
+
+    default:
+
+      return false;
+
+  }
+
+}
+
+
+// ============================================================
+// NUMBER CHECK
+// ============================================================
+
+function hasNumberOrNumberWord(text) {
+
+  if (/\d/.test(text)) {
+    return true;
+  }
+
+  const numberWords = [
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "twenty",
+    "thirty",
+    "forty",
+    "fifty",
+    "sixty",
+    "seventy",
+    "eighty",
+    "ninety"
+  ];
+
+  return numberWords.some(function (word) {
+    return text.includes(word);
+  });
+
+}
+
+
+// ============================================================
+// SUCCESS
+// ============================================================
+
+function showSpeakSuccess(
+  answer,
+  points
+) {
+
+  const feedback =
+    document.getElementById("speakFeedback");
+
+  if (!feedback) return;
+
+  const message =
+    points === 1
+      ? "Excellent!"
+      : "Good!";
+
+  feedback.innerHTML = `
+
+    <div class="success-feedback">
+
+      <h3>
+        🌟 ${message}
+      </h3>
+
+      <p>
+        <strong>You said:</strong>
+        ${escapeSpeakHTML(answer)}
+      </p>
+
+      <p>
+        <strong>Score this turn:</strong>
+        +${points} ${points === 1 ? "point" : "points"}
+      </p>
+
+      <p>
+        <strong>Total:</strong>
+        ${formatSpeakScore(speakScore)} / 10
+      </p>
+
+      <button
+        type="button"
+        class="continue-button"
+        onclick="nextSpeakStep()">
+
+        Continue →
+
+      </button>
+
+    </div>
+
+  `;
+
+  const button =
+    document.getElementById("speakButton");
+
+  if (button) {
+    button.disabled = true;
+  }
+
+  if (points === 1) {
+
+    if (typeof playTone === "function") {
+
+      playTone(523, 0.12);
+
+      window.setTimeout(function () {
+        playTone(659, 0.12);
+      }, 130);
+
+      window.setTimeout(function () {
+        playTone(784, 0.14);
+      }, 260);
+
+    }
+
+    window.setTimeout(function () {
+      speakText("Excellent!");
+    }, 450);
+
+  } else {
+
+    if (typeof playTone === "function") {
+
+      playTone(523, 0.12);
+
+      window.setTimeout(function () {
+        playTone(659, 0.14);
+      }, 140);
+
+    }
+
+    window.setTimeout(function () {
+      speakText("Good!");
+    }, 350);
+
+  }
+
+}
+
+
+// ============================================================
+// REPEAT
+// ============================================================
+
+function showSpeakRepeat(answer) {
+
+  const feedback =
+    document.getElementById("speakFeedback");
+
+  if (!feedback) return;
+
+  feedback.innerHTML = `
+
+    <div class="repeat-feedback">
+
+      <h3>
+        🔄 Repeat, please.
+      </h3>
+
+      <p>
+        <strong>I heard:</strong>
+        ${escapeSpeakHTML(answer || "—")}
+      </p>
+
+      <p>
+        Please speak one complete English sentence
+        that answers the task.
+      </p>
+
+      <p>
+        You can try again or press
+        <strong>💡 Idea</strong>.
+      </p>
+
+    </div>
+
+  `;
+
+  if (typeof playTone === "function") {
+
+    playTone(440, 0.14);
+
+    window.setTimeout(function () {
+      playTone(330, 0.18);
+    }, 150);
+
+  }
+
+  window.setTimeout(function () {
+    speakText("Repeat, please.");
+  }, 350);
+
+}
+
+
+// ============================================================
+// NEXT SPEAK STEP
+// ============================================================
+
+function nextSpeakStep() {
+
+  speakStep++;
+
+  showSpeakStep();
+
+}
+
+
+// ============================================================
+// FINAL RESULT
+// ============================================================
+
+function showSpeakResult() {
+
+  const score =
+    formatSpeakScore(speakScore);
+
+  let fullPoints = 0;
+  let halfPoints = 0;
+
+  Object.keys(speakScoredSteps).forEach(function (key) {
+
+    // The total score already contains the awarded points.
+    // We derive the summary from the final score only below.
+
+  });
+
+  const approximateHalfUnits =
+    Math.round(speakScore * 2);
+
+  // This is only a display summary.
+  // The authoritative result is Score / 10.
+
+  let resultMessage = "";
+
+  if (speakScore >= 9) {
+
+    resultMessage =
+      "Excellent speaking practice!";
+
+  } else if (speakScore >= 7) {
+
+    resultMessage =
+      "Very good speaking practice!";
+
+  } else if (speakScore >= 5) {
+
+    resultMessage =
+      "Good practice. Keep speaking!";
+
+  } else {
+
+    resultMessage =
+      "Keep practicing. You can improve!";
+
+  }
+
+  document.querySelector("main").innerHTML = `
+
+    <section class="lesson-card">
+
+      <div class="level">
+        🎤 SPEAK COMPLETE
+      </div>
+
+      <h2>
+        🎉 BOOK A TOUR
+      </h2>
+
+      <div class="result-score">
+
+        <h3>
+          Your Speaking Score
+        </h3>
+
+        <div
+          style="
+            font-size:42px;
+            font-weight:700;
+            margin:20px 0;
+          ">
+
+          ${score} / 10
+
+        </div>
+
+        <p>
+          ${resultMessage}
+        </p>
+
+        <p>
+          1 point = correct without viewing Idea
+        </p>
+
+        <p>
+          0.5 point = correct after viewing Idea
+        </p>
+
+      </div>
+
+      <div class="result-buttons">
+
+        <button
+          type="button"
+          class="continue-button"
+          onclick="restartSpeakPractice()">
+
+          🔄 Practice Again
+
+        </button>
+
+        <button
+          type="button"
+          class="back-button"
+          onclick="showSpeakComingSoon()">
+
+          👤 Change Role
+
+        </button>
+
+        <button
+          type="button"
+          class="back-button"
+          onclick="openBookTour()">
+
+          ← Back to BOOK A TOUR
+
+        </button>
+
+      </div>
+
+    </section>
+
+  `;
+
+  window.setTimeout(function () {
+
+    speakText(
+      "Your speaking score is " +
+      score +
+      " out of ten."
+    );
+
+  }, 400);
+
+}
+
+
+// ============================================================
+// RESTART
+// ============================================================
+
+function restartSpeakPractice() {
+
+  speakStep = 0;
+  speakScore = 0;
+  speakIdeaUsed = false;
+  speakTranscript = "";
+  speakScoredSteps = {};
+
+  startSpeakConversation();
+
+}
+
+
+// ============================================================
+// NORMALIZE SPEECH TEXT
+// ============================================================
+
+function normalizeSpeakText(text) {
+
+  return String(text || "")
+    .toLowerCase()
+    .replace(/[’]/g, "'")
+    .replace(/[^a-z0-9\s']/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+}
+
+
+// ============================================================
+// SAFE HTML
+// ============================================================
+
+function escapeSpeakHTML(text) {
+
+  return String(text || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+
+
+// ============================================================
+// SCORE FORMAT
+// ============================================================
+
+function formatSpeakScore(score) {
+
+  if (Number.isInteger(score)) {
+    return String(score);
+  }
+
+  return score.toFixed(1);
 
 }
